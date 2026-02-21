@@ -1,0 +1,16 @@
+<div class="pull-error">
+    <span class="tag tag-danger">Error</span>
+    <span class="pull-error-text">{{ message }}</span>
+    <button class="btn btn-primary pull-button"
+            hx-get="/api/pull/discover"
+            hx-target="#pull-container"
+            hx-swap="innerHTML">
+        Retry
+    </button>
+    <button class="btn btn-ghost"
+            hx-get="/api/pull/dismiss"
+            hx-target="#pull-container"
+            hx-swap="innerHTML">
+        Dismiss
+    </button>
+</div>

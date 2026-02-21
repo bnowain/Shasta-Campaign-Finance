@@ -1,0 +1,104 @@
+{
+  "items": [
+    {
+      "id": 3,
+      "abbreviation": "F401A"
+    },
+    {
+      "id": 15,
+      "abbreviation": "F401B"
+    },
+    {
+      "id": 16,
+      "abbreviation": "F401B1"
+    },
+    {
+      "id": 17,
+      "abbreviation": "F401C"
+    },
+    {
+      "id": 18,
+      "abbreviation": "F401D"
+    },
+    {
+      "id": 8,
+      "abbreviation": "F450P5"
+    },
+    {
+      "id": 0,
+      "abbreviation": "F460A"
+    },
+    {
+      "id": 12,
+      "abbreviation": "F460B1"
+    },
+    {
+      "id": 13,
+      "abbreviation": "F460B2"
+    },
+    {
+      "id": 1,
+      "abbreviation": "F460C"
+    },
+    {
+      "id": 5,
+      "abbreviation": "F460D"
+    },
+    {
+      "id": 6,
+      "abbreviation": "F460E"
+    },
+    {
+      "id": 11,
+      "abbreviation": "F460F"
+    },
+    {
+      "id": 7,
+      "abbreviation": "F460G"
+    },
+    {
+      "id": 14,
+      "abbreviation": "F460H"
+    },
+    {
+      "id": 2,
+      "abbreviation": "F460I"
+    },
+    {
+      "id": 9,
+      "abbreviation": "F461P5"
+    },
+    {
+      "id": 10,
+      "abbreviation": "F465P3"
+    },
+    {
+      "id": 4,
+      "abbreviation": "F496P3"
+    },
+    {
+      "id": 20,
+      "abbreviation": "F497P1"
+    },
+    {
+      "id": 21,
+      "abbreviation": "F497P2"
+    },
+    {
+      "id": 23,
+      "abbreviation": "F498A"
+    },
+    {
+      "id": 22,
+      "abbreviation": "F498R"
+    },
+    {
+      "id": 19,
+      "abbreviation": "S496"
+    },
+    {
+      "id": -1,
+      "abbreviation": "Unset"
+    }
+  ]
+}

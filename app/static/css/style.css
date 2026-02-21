@@ -1,0 +1,556 @@
+/* NetFile Tracker — Design System from BUILDOUT.md §5a */
+
+:root {
+    /* Colors */
+    --bg:           #f8f9fa;
+    --surface:      #ffffff;
+    --text:         #1a1a2e;
+    --text-muted:   #6c757d;
+    --border:       #e2e8f0;
+    --accent:       #2563eb;
+    --accent-hover: #1d4ed8;
+    --success:      #059669;
+    --warning:      #d97706;
+    --danger:       #dc2626;
+    --tag-bg:       #eff6ff;
+    --tag-text:     #1e40af;
+    --tag-hover:    #dbeafe;
+
+    /* Typography */
+    --font-sans:  'Inter', system-ui, -apple-system, sans-serif;
+    --font-mono:  'JetBrains Mono', 'Fira Code', monospace;
+
+    /* Spacing */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+
+    /* Layout */
+    --sidebar-width: 220px;
+    --topbar-height: 48px;
+
+    /* Border radius */
+    --radius-card: 8px;
+    --radius-btn: 6px;
+    --radius-pill: 9999px;
+    --radius-input: 6px;
+}
+
+/* Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 14px;
+}
+
+body {
+    font-family: var(--font-sans);
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+/* ─── Topbar ─────────────────────────────────────────── */
+
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--topbar-height);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 var(--space-4);
+    gap: var(--space-4);
+    z-index: 100;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-shrink: 0;
+}
+
+.topbar-brand {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.topbar-center {
+    flex: 1;
+    max-width: 480px;
+}
+
+.topbar-right {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.sidebar-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: var(--space-1);
+    border-radius: var(--radius-btn);
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-toggle:hover {
+    background: var(--bg);
+    color: var(--text);
+}
+
+.global-search {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-input);
+    font-size: 0.9rem;
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text);
+}
+
+.global-search:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.global-search:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ─── App Layout ─────────────────────────────────────── */
+
+.app-layout {
+    display: flex;
+    padding-top: var(--topbar-height);
+    min-height: 100vh;
+}
+
+/* ─── Sidebar ────────────────────────────────────────── */
+
+.sidebar {
+    position: fixed;
+    top: var(--topbar-height);
+    left: 0;
+    bottom: 0;
+    width: var(--sidebar-width);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: var(--space-4) 0;
+    overflow-y: auto;
+    transition: transform 0.2s ease;
+    z-index: 50;
+}
+
+.sidebar.collapsed {
+    transform: translateX(-100%);
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0 var(--space-2);
+}
+
+.nav-link {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: var(--radius-btn);
+    font-size: 0.95rem;
+    transition: all 0.15s ease;
+}
+
+.nav-link:hover {
+    background: var(--bg);
+    color: var(--text);
+}
+
+.nav-link.active {
+    background: var(--tag-bg);
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.nav-link.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.nav-divider {
+    height: 1px;
+    background: var(--border);
+    margin: var(--space-3) var(--space-4);
+}
+
+/* ─── Main Content ───────────────────────────────────── */
+
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    padding: var(--space-6);
+    transition: margin-left 0.2s ease;
+    max-width: 1200px;
+}
+
+.sidebar.collapsed ~ .main-content {
+    margin-left: 0;
+}
+
+/* ─── Page Header ────────────────────────────────────── */
+
+.page-header {
+    margin-bottom: var(--space-6);
+}
+
+.page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-1);
+}
+
+/* ─── Cards ──────────────────────────────────────────── */
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-4);
+}
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+}
+
+.card-header {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border);
+}
+
+.card-header h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.card-body {
+    padding: var(--space-4);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text);
+    margin-bottom: var(--space-1);
+}
+
+/* ─── Tags / Chips ───────────────────────────────────── */
+
+.tag {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-pill);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.tag-success {
+    background: #ecfdf5;
+    color: var(--success);
+}
+
+.tag-warning {
+    background: #fffbeb;
+    color: var(--warning);
+}
+
+.tag-danger {
+    background: #fef2f2;
+    color: var(--danger);
+}
+
+.tag-muted {
+    background: var(--bg);
+    color: var(--text-muted);
+}
+
+/* ─── Status Rows ────────────────────────────────────── */
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.status-row:last-child {
+    border-bottom: none;
+}
+
+/* ─── Buttons ────────────────────────────────────────── */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid transparent;
+    border-radius: var(--radius-btn);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    border-color: var(--border);
+}
+
+.btn-ghost:hover {
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* ─── Text Utilities ─────────────────────────────────── */
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+/* ─── Error Page ─────────────────────────────────────── */
+
+.error-page {
+    text-align: center;
+    padding: var(--space-8) 0;
+}
+
+.error-page h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: var(--space-2);
+}
+
+.error-page p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-6);
+}
+
+/* ─── PDF Panel ──────────────────────────────────────── */
+
+.pdf-panel {
+    position: fixed;
+    top: var(--topbar-height);
+    right: 0;
+    bottom: 0;
+    width: 60%;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.08);
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+.pdf-panel.open {
+    transform: translateX(0);
+}
+
+.pdf-panel-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border);
+}
+
+.pdf-panel-title {
+    flex: 1;
+    font-weight: 600;
+}
+
+.pdf-panel-content {
+    flex: 1;
+    overflow: auto;
+    padding: var(--space-4);
+}
+
+/* ─── Pull UI ────────────────────────────────────────── */
+
+.pull-button {
+    white-space: nowrap;
+}
+
+.pull-spinner {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.pull-discovered {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.85rem;
+}
+
+.pull-discovered-text {
+    white-space: nowrap;
+}
+
+.pull-progress {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 240px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+    min-width: 100px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: var(--radius-pill);
+    transition: width 0.3s ease;
+}
+
+.pull-progress-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    max-width: 280px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pull-complete {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.85rem;
+}
+
+.pull-summary {
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.pull-error {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.85rem;
+}
+
+.pull-error-text {
+    color: var(--danger);
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Hide search bar during pull progress */
+.topbar:has(.pull-progress) .topbar-center {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.htmx-indicator {
+    display: none;
+}
+
+.htmx-request .htmx-indicator {
+    display: inline;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.htmx-request .pull-button {
+    display: none;
+}
+
+/* ─── Responsive ─────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: var(--space-4);
+    }
+
+    .pdf-panel {
+        width: 100%;
+    }
+
+    .topbar-center {
+        display: none;
+    }
+}

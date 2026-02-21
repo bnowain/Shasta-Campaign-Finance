@@ -1,0 +1,26 @@
+<div class="pull-complete" id="pull-complete">
+    <span class="tag tag-success">Done</span>
+    <span class="pull-summary">
+        {{ filings }} filing{{ "s" if filings != 1 else "" }},
+        {{ pdfs }} PDF{{ "s" if pdfs != 1 else "" }},
+        {{ transactions }} transaction{{ "s" if transactions != 1 else "" }}
+        ({{ elapsed }}s)
+    </span>
+    <button class="btn btn-ghost"
+            hx-get="/api/pull/dismiss"
+            hx-target="#pull-container"
+            hx-swap="innerHTML">
+        Dismiss
+    </button>
+</div>
+
+<script>
+(function() {
+    setTimeout(function() {
+        var el = document.getElementById('pull-complete');
+        if (el) {
+            htmx.ajax('GET', '/api/pull/dismiss', {target: '#pull-container', swap: 'innerHTML'});
+        }
+    }, 8000);
+})();
+</script>

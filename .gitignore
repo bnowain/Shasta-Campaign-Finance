@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+
+# Project-specific
+database/*.db
+database/*.db-wal
+database/*.db-shm
+database/netfile_tracker.lock
+pdfs/*.pdf
+exports/*.xlsx
+exports/*.csv
+exports/.backfill_resume.json
+logs/*.log
+
+# OS
+Thumbs.db
+.DS_Store

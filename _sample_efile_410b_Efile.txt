@@ -1,0 +1,9 @@
+HDR,CAL,CA,2.01,NetFile,0_10h38m47s,Supercedes=214569655;Hash=1813470;
+CVR,F410,1479725,COM,Francescut for County Clerk 2026,,,,002,20260207,X,20250501,,,,Redding,CA,96001,(530) 377-3187,Shasta,Shasta,,,Redding,CA,96099-0264,,jlfrancescut@outlook.com,Milton,Maggi,,,,,Redding,CA,96001-0970,(530) 999-1929,,,,,,Plumas Bank,,,Redding,CA,96001,(888) 375-8627,Bank account redacted,,,,,,,,
+CVR2,F410,ph4eiFRbTkZ9,POF,Mallory,Melissa,,,ATR,,,Redding,CA,96001,,,happiestbutterfly1973@gmail.com,,,,,,,,,,,,,,,
+CVR2,F410,nLTqeJndxgq6,CAO,Francescut,Joanna,,,CTL,,,,,,,,,,,,OTH,County Clerk,CTY,Shasta,All,S,X,,,,,2026
+CVR3,F410,VER_1,CAO,20260207,,Francescut,Joanna,,
+CVR3,F410,VER_2,TRE,20260207,,Milton,Maggi,,
+CVR3,F410,VER_3,ATR,20260207,,Mallory,Melissa,,
+TEXT,F410,BANK_AUTHORIZED,Joanna Francescut; Maggi Milton; Melissa Mallory
+TEXT,F410,TREASURER_EMAIL,maggim0379@gmail.com

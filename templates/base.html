@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title | default("NetFile Tracker") }} - NetFile Tracker</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+</head>
+<body>
+    <!-- Topbar -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="5" x2="17" y2="5"/>
+                    <line x1="3" y1="10" x2="17" y2="10"/>
+                    <line x1="3" y1="15" x2="17" y2="15"/>
+                </svg>
+            </button>
+            <a href="/" class="topbar-brand">NetFile Tracker</a>
+        </div>
+        <div class="topbar-center">
+            <input type="search"
+                   class="global-search"
+                   placeholder="Search filings, filers, transactions..."
+                   name="q"
+                   hx-get="/search"
+                   hx-trigger="keyup changed delay:300ms"
+                   hx-target="#search-results"
+                   disabled>
+        </div>
+        <div class="topbar-right">
+            <div id="pull-container">{% include "components/pull_idle.html" %}</div>
+        </div>
+    </header>
+
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <ul class="nav-list">
+                <li><a href="/" class="nav-link active">Dashboard</a></li>
+                <li><a href="/filings" class="nav-link disabled">Filings</a></li>
+                <li><a href="/filers" class="nav-link disabled">Filers</a></li>
+                <li><a href="/transactions" class="nav-link disabled">Transactions</a></li>
+                <li><a href="/people" class="nav-link disabled">People</a></li>
+                <li><a href="/elections" class="nav-link disabled">Elections</a></li>
+            </ul>
+            <div class="nav-divider"></div>
+            <ul class="nav-list">
+                <li><a href="/api/docs" class="nav-link" target="_blank">API Docs</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main content -->
+        <main class="main-content">
+            <div id="search-results"></div>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- PDF slide-out panel (hidden by default) -->
+    <div class="pdf-panel" id="pdf-panel" hidden>
+        <div class="pdf-panel-header">
+            <button class="btn btn-ghost" onclick="closePdfPanel()">Close</button>
+            <span class="pdf-panel-title"></span>
+            <a class="btn btn-ghost" id="pdf-download-link" download>Download</a>
+        </div>
+        <div class="pdf-panel-content" id="pdf-panel-content"></div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

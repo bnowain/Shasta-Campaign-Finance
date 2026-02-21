@@ -1,0 +1,16 @@
+<div class="pull-discovered">
+    <span class="pull-discovered-text">
+        Found <strong>{{ count }}</strong> new filing{{ "s" if count != 1 else "" }}
+    </span>
+    <form hx-post="/api/pull/ingest"
+          hx-target="#pull-container"
+          hx-swap="innerHTML">
+        <button type="submit" class="btn btn-primary pull-button">Pull Now</button>
+    </form>
+    <button class="btn btn-ghost"
+            hx-get="/api/pull/dismiss"
+            hx-target="#pull-container"
+            hx-swap="innerHTML">
+        Dismiss
+    </button>
+</div>

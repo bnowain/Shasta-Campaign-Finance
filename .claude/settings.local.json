@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(cd /e/0-Automated-Apps/Shasta-Campaign-Finance && pip install -r requirements.txt 2>&1)",
+      "Bash(cd /e/0-Automated-Apps/Shasta-Campaign-Finance && python -m app.utils.process_manager --status 2>&1)",
+      "Bash(sleep 4 && curl -s http://localhost:8855/api/health 2>&1)",
+      "Bash(curl:*)",
+      "Bash(cd /e/0-Automated-Apps/Shasta-Campaign-Finance && python -c \"\nimport sqlite3\nconn = sqlite3.connect\\('database/netfile_tracker.db'\\)\ncursor = conn.cursor\\(\\)\ncursor.execute\\(\\\\\"SELECT name FROM sqlite_master WHERE type IN \\('table','view'\\) ORDER BY name\\\\\"\\)\ntables = [row[0] for row in cursor.fetchall\\(\\)]\nprint\\(f'Tables found: {len\\(tables\\)}'\\)\nfor t in tables:\n    print\\(f'  - {t}'\\)\nconn.close\\(\\)\n\" 2>&1)",
+      "Bash(cd /e/0-Automated-Apps/Shasta-Campaign-Finance && python -m app.utils.process_manager --kill 2>&1)",
+      "Bash(sleep 4 && cd /e/0-Automated-Apps/Shasta-Campaign-Finance && python -c \"\nimport sqlite3\nconn = sqlite3.connect\\('database/netfile_tracker.db'\\)\ncursor = conn.cursor\\(\\)\ncursor.execute\\(\\\\\"SELECT name FROM sqlite_master WHERE type='table' ORDER BY name\\\\\"\\)\ntables = [row[0] for row in cursor.fetchall\\(\\)]\nprint\\(f'Tables found: {len\\(tables\\)}'\\)\nfor t in tables:\n    print\\(f'  - {t}'\\)\nconn.close\\(\\)\n\" 2>&1)",
+      "Bash(cd /e/0-Automated-Apps/Shasta-Campaign-Finance && python -c \"\nimport asyncio, json\nfrom app.services.netfile_api import NetFileClient\n\nasync def main\\(\\):\n    client = NetFileClient\\(\\)\n    try:\n        # 1. RSS Feed\n        print\\('=== RSS FEED \\(first 3000 chars\\) ==='\\)\n        rss = await client.get_rss_feed\\(\\)\n        print\\(rss[:3000]\\)\n        print\\('...'\\)\n        print\\(f'Total RSS length: {len\\(rss\\)} chars'\\)\n    finally:\n        await client.close\\(\\)\n\nasyncio.run\\(main\\(\\)\\)\n\" 2>&1)",
+      "Bash(cd E:\\\\0-Automated-Apps\\\\Shasta-Campaign-Finance:*)",
+      "Bash(true:*)",
+      "Bash(cd \"E:\\\\0-Automated-Apps\\\\Shasta-Campaign-Finance\" && python -c \"\nimport asyncio\nfrom app.services.netfile_api import NetFileClient\n\nasync def test\\(\\):\n    client = NetFileClient\\(\\)\n    print\\('=== Fetching RSS feed ==='\\)\n    xml = await client.get_rss_feed\\(\\)\n    print\\(f'Got {len\\(xml\\)} bytes of XML'\\)\n    print\\(xml[:500]\\)\n    print\\('...'\\)\n    await client.close\\(\\)\n\nasyncio.run\\(test\\(\\)\\)\n\" 2>&1)",
+      "WebFetch(domain:public.netfile.com)",
+      "Bash(cd:*)"
+    ]
+  }
+}

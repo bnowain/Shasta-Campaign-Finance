@@ -1,0 +1,47 @@
+{
+  "totalMatchingCount": 401,
+  "totalMatchingPages": 81,
+  "filers": [
+    {
+      "id": "a132f1a5-79a2-4ca1-9c67-b0a40163ab2c",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "",
+      "localAgencyId": "CSHA-113892",
+      "name": "Baker, Stephen Hiram"
+    },
+    {
+      "id": "ca8f628a-35a0-4ec9-af6c-ad6b00c7e0b8",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "1283271",
+      "localAgencyId": "CSHA-113896",
+      "name": "Committee to Re-Elect Les Baugh Supervisor 2018"
+    },
+    {
+      "id": "c0782227-7576-4e4a-bbb2-af0000e12a06",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "1453972",
+      "localAgencyId": "CSHA-113912",
+      "name": "Peggy Colwell for Shasta College board member 2022"
+    },
+    {
+      "id": "9b4ccf62-016e-435d-aa30-b09e016f217d",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "",
+      "localAgencyId": "CSHA-113924",
+      "name": "Farrell, William L"
+    },
+    {
+      "id": "a7f0e6f0-ce8e-44a1-8009-b1cb0134be54",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "",
+      "localAgencyId": "CSHA-113939",
+      "name": "Hines, Marlene Pinky"
+    }
+  ],
+  "responseStatus": null
+}

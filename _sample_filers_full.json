@@ -1,0 +1,87 @@
+{
+  "totalMatchingCount": 401,
+  "totalMatchingPages": 41,
+  "filers": [
+    {
+      "id": "a132f1a5-79a2-4ca1-9c67-b0a40163ab2c",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "",
+      "localAgencyId": "CSHA-113892",
+      "name": "Baker, Stephen Hiram"
+    },
+    {
+      "id": "ca8f628a-35a0-4ec9-af6c-ad6b00c7e0b8",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "1283271",
+      "localAgencyId": "CSHA-113896",
+      "name": "Committee to Re-Elect Les Baugh Supervisor 2018"
+    },
+    {
+      "id": "c0782227-7576-4e4a-bbb2-af0000e12a06",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "1453972",
+      "localAgencyId": "CSHA-113912",
+      "name": "Peggy Colwell for Shasta College board member 2022"
+    },
+    {
+      "id": "9b4ccf62-016e-435d-aa30-b09e016f217d",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "",
+      "localAgencyId": "CSHA-113924",
+      "name": "Farrell, William L"
+    },
+    {
+      "id": "a7f0e6f0-ce8e-44a1-8009-b1cb0134be54",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "",
+      "localAgencyId": "CSHA-113939",
+      "name": "Hines, Marlene Pinky"
+    },
+    {
+      "id": "15603f95-319d-470c-ab16-aefb00ce2691",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "",
+      "localAgencyId": "CSHA-113941",
+      "name": "Hull, Rhonda F"
+    },
+    {
+      "id": "87817e44-6ddd-4bfd-aa91-b1f101130fe8",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "",
+      "localAgencyId": "CSHA-113946",
+      "name": "Kobe, Kay E"
+    },
+    {
+      "id": "58689341-f776-48ac-bc23-b1c50177e347",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "",
+      "localAgencyId": "CSHA-113967",
+      "name": "Ontano, Kathy Leaverton"
+    },
+    {
+      "id": "4d232a12-200d-4ad6-a912-b1bf01251f56",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "",
+      "localAgencyId": "CSHA-113968",
+      "name": "Percy, Paula C."
+    },
+    {
+      "id": "57e74703-556a-47bc-9fb3-b1c50157fe56",
+      "agency": "CSHA",
+      "application": "Campaign",
+      "fppcId": "",
+      "localAgencyId": "CSHA-113971",
+      "name": "Presley, Lewis"
+    }
+  ],
+  "responseStatus": null
+}
