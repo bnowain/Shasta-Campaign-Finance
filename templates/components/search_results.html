@@ -1,0 +1,21 @@
+{% if results %}
+<div class="search-dropdown">
+    {% for result in results %}
+    <a class="search-result-item"
+       href="{% if result.entity_type == 'filer' %}/filers/{{ result.entity_id }}{% elif result.entity_type == 'transaction_entity' %}/transactions?search={{ result.name }}{% else %}#{% endif %}">
+        <span class="tag {% if result.entity_type == 'filer' %}tag-success{% else %}tag-muted{% endif %}" style="font-size: 0.7rem;">
+            {% if result.entity_type == 'filer' %}Filer{% else %}Person{% endif %}
+        </span>
+        <span class="search-result-name">{{ result.name }}</span>
+        {% if result.context %}
+        <span class="search-result-context">{{ result.context }}</span>
+        {% endif %}
+    </a>
+    {% endfor %}
+    {% if results|length >= 10 %}
+    <a class="search-result-item search-result-all" href="/transactions?search={{ query }}">
+        Search all for "{{ query }}"...
+    </a>
+    {% endif %}
+</div>
+{% endif %}

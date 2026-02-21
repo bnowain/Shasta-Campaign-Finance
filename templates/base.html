@@ -28,7 +28,7 @@
                    hx-get="/search"
                    hx-trigger="keyup changed delay:300ms"
                    hx-target="#search-results"
-                   disabled>
+                   autocomplete="off">
         </div>
         <div class="topbar-right">
             <div id="pull-container">{% include "components/pull_idle.html" %}</div>
@@ -38,13 +38,14 @@
     <div class="app-layout">
         <!-- Sidebar -->
         <nav class="sidebar" id="sidebar">
+            {% set path = request.url.path %}
             <ul class="nav-list">
-                <li><a href="/" class="nav-link active">Dashboard</a></li>
-                <li><a href="/filings" class="nav-link disabled">Filings</a></li>
-                <li><a href="/filers" class="nav-link disabled">Filers</a></li>
-                <li><a href="/transactions" class="nav-link disabled">Transactions</a></li>
-                <li><a href="/people" class="nav-link disabled">People</a></li>
-                <li><a href="/elections" class="nav-link disabled">Elections</a></li>
+                <li><a href="/" class="nav-link {% if path == '/' %}active{% endif %}">Dashboard</a></li>
+                <li><a href="/filings" class="nav-link {% if path.startswith('/filings') %}active{% endif %}">Filings</a></li>
+                <li><a href="/filers" class="nav-link {% if path.startswith('/filers') %}active{% endif %}">Filers</a></li>
+                <li><a href="/transactions" class="nav-link {% if path.startswith('/transactions') %}active{% endif %}">Transactions</a></li>
+                <li><a href="/people" class="nav-link {% if path == '/people' %}active{% endif %}">People</a></li>
+                <li><a href="/elections" class="nav-link {% if path == '/elections' %}active{% endif %}">Elections</a></li>
             </ul>
             <div class="nav-divider"></div>
             <ul class="nav-list">
@@ -69,6 +70,13 @@
         <div class="pdf-panel-content" id="pdf-panel-content"></div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        if (typeof pdfjsLib !== "undefined") {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+        }
+    </script>
     <script src="/static/js/app.js"></script>
+    <script src="/static/js/pdf-viewer.js"></script>
 </body>
 </html>

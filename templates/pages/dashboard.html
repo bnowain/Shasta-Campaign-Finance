@@ -6,54 +6,25 @@
     <p class="text-muted">Shasta County Campaign Finance Disclosures</p>
 </div>
 
-<div class="card-grid">
-    <div class="card">
-        <div class="card-header">
-            <h3>Filings</h3>
-        </div>
-        <div class="card-body">
-            <p class="stat-number">--</p>
-            <p class="text-muted">Total filings tracked</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <h3>Filers</h3>
-        </div>
-        <div class="card-body">
-            <p class="stat-number">--</p>
-            <p class="text-muted">Registered committees</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <h3>Transactions</h3>
-        </div>
-        <div class="card-body">
-            <p class="stat-number">--</p>
-            <p class="text-muted">Financial transactions</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <h3>People</h3>
-        </div>
-        <div class="card-body">
-            <p class="stat-number">--</p>
-            <p class="text-muted">Tagged individuals</p>
-        </div>
-    </div>
+<div class="card-grid"
+     hx-get="/dashboard/stats"
+     hx-trigger="load"
+     hx-swap="innerHTML">
+    <div class="card"><div class="card-body"><p class="stat-number">--</p></div></div>
+    <div class="card"><div class="card-body"><p class="stat-number">--</p></div></div>
+    <div class="card"><div class="card-body"><p class="stat-number">--</p></div></div>
+    <div class="card"><div class="card-body"><p class="stat-number">--</p></div></div>
 </div>
 
 <div class="card" style="margin-top: 1.5rem;">
     <div class="card-header">
         <h3>Recent Filings</h3>
     </div>
-    <div class="card-body">
-        <p class="text-muted">No filings yet. Use the Pull button to fetch new filings from NetFile, or run the backfill CLI to import historical data.</p>
+    <div class="card-body"
+         hx-get="/dashboard/recent"
+         hx-trigger="load"
+         hx-swap="innerHTML">
+        <p class="text-muted">Loading...</p>
     </div>
 </div>
 

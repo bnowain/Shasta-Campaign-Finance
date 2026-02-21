@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Filers</h1>
+    <p class="text-muted">Campaign committees and candidates — Shasta County</p>
+</div>
+
+<div class="filter-bar">
+    <input type="text"
+           class="filter-input"
+           name="search"
+           placeholder="Search by name or ID..."
+           hx-get="/filers/list"
+           hx-trigger="keyup changed delay:300ms"
+           hx-target="#filers-table-body"
+           hx-include=".filter-input"
+           value="">
+    <select class="filter-input"
+            name="filer_type"
+            hx-get="/filers/list"
+            hx-trigger="change"
+            hx-target="#filers-table-body"
+            hx-include=".filter-input">
+        <option value="">All Types</option>
+        <option value="candidate">Candidate</option>
+        <option value="measure">Measure</option>
+        <option value="pac">PAC</option>
+        <option value="party">Party</option>
+    </select>
+    <select class="filter-input"
+            name="status"
+            hx-get="/filers/list"
+            hx-trigger="change"
+            hx-target="#filers-table-body"
+            hx-include=".filter-input">
+        <option value="">All Statuses</option>
+        <option value="active">Active</option>
+        <option value="terminated">Terminated</option>
+    </select>
+</div>
+
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Last Filing</th>
+                </tr>
+            </thead>
+            <tbody id="filers-table-body"
+                   hx-get="/filers/list?page=1"
+                   hx-trigger="load"
+                   hx-swap="innerHTML">
+                <tr><td colspan="5" class="loading-sentinel">Loading filers...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h1>Transactions</h1>
+            <p class="text-muted">Campaign finance transactions — Shasta County</p>
+        </div>
+        <a class="btn btn-ghost"
+           id="export-btn"
+           href="/transactions/export"
+           onclick="this.href='/transactions/export?' + new URLSearchParams(Object.fromEntries(new FormData(document.getElementById('txn-filters')))).toString()">
+            Export CSV
+        </a>
+    </div>
+</div>
+
+<form id="txn-filters" class="filter-bar">
+    <input type="text"
+           class="filter-input"
+           name="search"
+           placeholder="Search name, description..."
+           hx-get="/transactions/list"
+           hx-trigger="keyup changed delay:300ms"
+           hx-target="#transactions-table-body"
+           hx-include=".filter-input"
+           value="">
+    <select class="filter-input"
+            name="schedule"
+            hx-get="/transactions/list"
+            hx-trigger="change"
+            hx-target="#transactions-table-body"
+            hx-include=".filter-input">
+        <option value="">All Schedules</option>
+        {% for s in schedules %}
+        <option value="{{ s }}">Schedule {{ s }}</option>
+        {% endfor %}
+    </select>
+    <select class="filter-input"
+            name="filer_id"
+            hx-get="/transactions/list"
+            hx-trigger="change"
+            hx-target="#transactions-table-body"
+            hx-include=".filter-input">
+        <option value="">All Filers</option>
+        {% for filer in filers %}
+        <option value="{{ filer.filer_id }}">{{ filer.name }}</option>
+        {% endfor %}
+    </select>
+    <input type="number"
+           class="filter-input"
+           name="amount_min"
+           placeholder="Min $"
+           style="width: 100px;"
+           hx-get="/transactions/list"
+           hx-trigger="change"
+           hx-target="#transactions-table-body"
+           hx-include=".filter-input">
+    <input type="number"
+           class="filter-input"
+           name="amount_max"
+           placeholder="Max $"
+           style="width: 100px;"
+           hx-get="/transactions/list"
+           hx-trigger="change"
+           hx-target="#transactions-table-body"
+           hx-include=".filter-input">
+    <input type="date"
+           class="filter-input"
+           name="date_from"
+           hx-get="/transactions/list"
+           hx-trigger="change"
+           hx-target="#transactions-table-body"
+           hx-include=".filter-input">
+    <input type="date"
+           class="filter-input"
+           name="date_to"
+           hx-get="/transactions/list"
+           hx-trigger="change"
+           hx-target="#transactions-table-body"
+           hx-include=".filter-input">
+</form>
+
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Schedule</th>
+                    <th>Name</th>
+                    <th>Filer</th>
+                    <th>City</th>
+                    <th class="text-right">Amount</th>
+                </tr>
+            </thead>
+            <tbody id="transactions-table-body"
+                   hx-get="/transactions/list?page=1"
+                   hx-trigger="load"
+                   hx-swap="innerHTML">
+                <tr><td colspan="6" class="loading-sentinel">Loading transactions...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

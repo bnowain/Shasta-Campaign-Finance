@@ -1,0 +1,45 @@
+{% for filing in filings %}
+<div class="filing-card">
+    <div class="filing-card-header">
+        <span class="tag tag-muted">{{ filing.form_type }}</span>
+        {% if filing.amendment_seq and filing.amendment_seq > 0 %}
+        <span class="tag tag-warning">Amend #{{ filing.amendment_seq }}</span>
+        {% endif %}
+        <span class="filing-card-date">{{ filing.filing_date.strftime('%Y-%m-%d') if filing.filing_date else 'No date' }}</span>
+    </div>
+    <div class="filing-card-body">
+        <a href="/filings/{{ filing.filing_id }}" class="filing-card-title">
+            {{ filing.filer.name if filing.filer else 'Unknown Filer' }}
+        </a>
+        {% if filing.period_start and filing.period_end %}
+        <p class="text-muted filing-card-period">
+            {{ filing.period_start.strftime('%m/%d/%Y') }} &ndash; {{ filing.period_end.strftime('%m/%d/%Y') }}
+        </p>
+        {% endif %}
+    </div>
+    <div class="filing-card-footer">
+        {% if filing.pdf_downloaded and filing.netfile_filing_id %}
+        <button class="btn btn-sm btn-ghost"
+                onclick="openPdfViewer('{{ filing.netfile_filing_id }}', '{{ filing.form_type }} - {{ filing.filer.name if filing.filer else "" }}')">
+            PDF
+        </button>
+        {% endif %}
+        <a href="/filings/{{ filing.filing_id }}" class="btn btn-sm btn-ghost">Detail</a>
+    </div>
+</div>
+{% endfor %}
+
+{% if not filings %}
+<div class="empty-state">
+    <p class="text-muted">No filings match your filters.</p>
+</div>
+{% endif %}
+
+{% if has_more %}
+<div class="loading-sentinel"
+     hx-get="/filings/list?page={{ page + 1 }}&form_type={{ form_type }}&filer_id={{ filer_id }}&date_from={{ date_from }}&date_to={{ date_to }}&search={{ search }}"
+     hx-trigger="revealed"
+     hx-swap="outerHTML">
+    Loading more...
+</div>
+{% endif %}

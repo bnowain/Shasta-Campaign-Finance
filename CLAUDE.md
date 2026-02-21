@@ -17,11 +17,18 @@ Shasta County campaign finance disclosure tracker. Spoke app in the Atlas hub-an
 - `app/config.py` — Central config, paths, env vars
 - `app/db.py` — Async SQLAlchemy engine, session factory, WAL pragmas, FTS5
 - `app/models.py` — 10 ORM models (Person, Election, Filer, Filing, Transaction, FilerPerson, TransactionPerson, ElectionCandidate, ScrapeLog, RssFeedState)
-- `app/main.py` — FastAPI app factory with lifespan
+- `app/main.py` — FastAPI app factory with lifespan, dashboard endpoints, Jinja2 filters
 - `app/utils/process_manager.py` — Zombie process cleanup for port 8855
 - `app/services/netfile_api.py` — NetFile Connect2 API client (6 endpoints)
+- `app/services/search_indexer.py` — FTS5 rebuild + search with LIKE fallback
 - `app/routers/system.py` — Health, port status, zombie kill endpoints
 - `app/routers/atlas.py` — Atlas registration + people search stub
+- `app/routers/filings.py` — Filing browser, detail, PDF serve (5 endpoints)
+- `app/routers/filers.py` — Filer directory + detail (3 endpoints)
+- `app/routers/transactions.py` — Transaction search + CSV export (3 endpoints)
+- `app/routers/search.py` — Global search HTMX dropdown
+- `app/routers/stubs.py` — People/Elections stub pages
+- `app/static/js/pdf-viewer.js` — PDF.js slide-out viewer controller
 - `run.py` — Startup: kill zombies + SO_REUSEADDR uvicorn
 - `BUILDOUT.md` — Complete specification (1,398 lines)
 
@@ -46,8 +53,8 @@ Shasta County campaign finance disclosure tracker. Spoke app in the Atlas hub-an
 
 ## Implementation Phases
 - Phase 1: Foundation (DONE) — scaffolding, models, process manager, routers, frontend shell
-- Phase 2: Pull Button + Data Pipeline
-- Phase 3: Frontend Core (filing browser, detail, PDF viewer)
-- Phase 4: Backfill CLI (Excel export, historical data)
-- Phase 5: People & Transactions (tagging, fuzzy matching)
-- Phase 6: Atlas Integration (people search, elections)
+- Phase 2: Pull Button + Data Pipeline (DONE) — RSS discovery, SSE progress, CAL parser
+- Phase 3: Frontend Core (DONE) — filing browser, filer directory, transactions, PDF viewer, global search
+- Phase 4: Backfill CLI (DONE) — Excel export, historical data (407 filers, 208 filings, 5,978 txns)
+- Phase 5: People & Transactions (stub) — tagging, fuzzy matching
+- Phase 6: Atlas Integration (stub) — people search, elections

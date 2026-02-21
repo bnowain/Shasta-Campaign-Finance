@@ -1,0 +1,39 @@
+<div class="card">
+    <div class="card-header">
+        <h3>Filings</h3>
+    </div>
+    <div class="card-body">
+        <p class="stat-number">{{ "{:,}".format(filing_count) }}</p>
+        <p class="text-muted">Total filings tracked</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>Filers</h3>
+    </div>
+    <div class="card-body">
+        <p class="stat-number">{{ "{:,}".format(filer_count) }}</p>
+        <p class="text-muted">Registered committees</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>Transactions</h3>
+    </div>
+    <div class="card-body">
+        <p class="stat-number">{{ "{:,}".format(transaction_count) }}</p>
+        <p class="text-muted">Financial transactions</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>Total Amount</h3>
+    </div>
+    <div class="card-body">
+        <p class="stat-number">${{ "{:,.0f}".format(total_amount) }}</p>
+        <p class="text-muted">All transaction value</p>
+    </div>
+</div>

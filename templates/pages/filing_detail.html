@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="/filings">Filings</a>
+    <span class="breadcrumb-sep">/</span>
+    <span>{{ filing.form_type }} — {{ filing.filer.name if filing.filer else 'Unknown' }}</span>
+</div>
+
+<div class="page-header">
+    <h1>
+        {{ filing.form_type }}
+        {% if filing.amendment_seq and filing.amendment_seq > 0 %}
+        <span class="tag tag-warning">Amendment #{{ filing.amendment_seq }}</span>
+        {% endif %}
+    </h1>
+    <p class="text-muted">
+        Filed by
+        <a href="/filers/{{ filing.filer_id }}">{{ filing.filer.name if filing.filer else 'Unknown' }}</a>
+    </p>
+</div>
+
+<div class="detail-meta-grid">
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Filed Date</span>
+        <span class="detail-meta-value">{{ filing.filing_date.strftime('%B %d, %Y') if filing.filing_date else 'Unknown' }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Period</span>
+        <span class="detail-meta-value">
+            {% if filing.period_start and filing.period_end %}
+            {{ filing.period_start.strftime('%m/%d/%Y') }} &ndash; {{ filing.period_end.strftime('%m/%d/%Y') }}
+            {% else %}
+            N/A
+            {% endif %}
+        </span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Transactions</span>
+        <span class="detail-meta-value mono">{{ "{:,}".format(txn_count) }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Total Amount</span>
+        <span class="detail-meta-value mono">${{ "{:,.2f}".format(txn_total) }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Form Name</span>
+        <span class="detail-meta-value">{{ filing.form_name or filing.form_type }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Data Source</span>
+        <span class="detail-meta-value">{{ filing.data_source or 'api' }}</span>
+    </div>
+</div>
+
+<div class="detail-actions">
+    {% if filing.pdf_downloaded and filing.netfile_filing_id %}
+    <button class="btn btn-primary"
+            onclick="openPdfViewer('{{ filing.netfile_filing_id }}', '{{ filing.form_type }} - {{ filing.filer.name if filing.filer else "" }}')">
+        View PDF
+    </button>
+    {% endif %}
+    <a href="/filers/{{ filing.filer_id }}" class="btn btn-ghost">View Filer</a>
+</div>
+
+{% if amendments|length > 1 %}
+<div class="card" style="margin-top: var(--space-6);">
+    <div class="card-header">
+        <h3>Amendment Chain</h3>
+    </div>
+    <div class="card-body">
+        {% for amend in amendments %}
+        <div class="amendment-item {% if amend.filing_id == filing.filing_id %}amendment-current{% endif %}">
+            <span class="tag {% if amend.filing_id == filing.filing_id %}tag-success{% else %}tag-muted{% endif %}">
+                {% if amend.amendment_seq == 0 %}Original{% else %}Amend #{{ amend.amendment_seq }}{% endif %}
+            </span>
+            {% if amend.filing_id != filing.filing_id %}
+            <a href="/filings/{{ amend.filing_id }}">{{ amend.filing_date.strftime('%Y-%m-%d') if amend.filing_date else 'No date' }}</a>
+            {% else %}
+            <span>{{ amend.filing_date.strftime('%Y-%m-%d') if amend.filing_date else 'No date' }} (current)</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="card" style="margin-top: var(--space-6);">
+    <div class="card-header">
+        <h3>Transactions ({{ "{:,}".format(txn_count) }})</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        {% if txn_count > 0 %}
+        <div hx-get="/filings/{{ filing.filing_id }}/transactions"
+             hx-trigger="load"
+             hx-swap="innerHTML">
+            <div class="loading-sentinel" style="padding: var(--space-4);">Loading transactions...</div>
+        </div>
+        {% else %}
+        <p class="text-muted" style="padding: var(--space-4);">No transactions recorded for this filing.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -530,6 +530,331 @@ body {
     display: none;
 }
 
+/* ─── Filter Bar ─────────────────────────────────────── */
+
+.filter-bar {
+    display: flex;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-input {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-input);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    background: var(--surface);
+    color: var(--text);
+    min-width: 140px;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* ─── Data Table ─────────────────────────────────────── */
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.data-table th {
+    text-align: left;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 2px solid var(--border);
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: var(--space-2) var(--space-4);
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+}
+
+.data-table tbody tr:hover {
+    background: var(--bg);
+}
+
+.data-table .text-right {
+    text-align: right;
+}
+
+/* ─── Filing Cards ───────────────────────────────────── */
+
+#filings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-4);
+}
+
+.filing-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.filing-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border);
+}
+
+.filing-card-date {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.filing-card-body {
+    padding: var(--space-3) var(--space-4);
+    flex: 1;
+}
+
+.filing-card-title {
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    display: block;
+    margin-bottom: var(--space-1);
+}
+
+.filing-card-title:hover {
+    color: var(--accent);
+}
+
+.filing-card-period {
+    font-size: 0.8rem;
+}
+
+.filing-card-footer {
+    display: flex;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-top: 1px solid var(--border);
+}
+
+/* ─── Detail Meta Grid ───────────────────────────────── */
+
+.detail-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.detail-meta-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: var(--space-4);
+}
+
+.detail-meta-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: var(--space-1);
+}
+
+.detail-meta-value {
+    display: block;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.detail-actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
+/* ─── Breadcrumb ─────────────────────────────────────── */
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.breadcrumb a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb-sep {
+    color: var(--border);
+}
+
+/* ─── Amendment Chain ────────────────────────────────── */
+
+.amendment-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.amendment-item:last-child {
+    border-bottom: none;
+}
+
+.amendment-item a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.amendment-item a:hover {
+    text-decoration: underline;
+}
+
+.amendment-current {
+    font-weight: 600;
+}
+
+/* ─── Loading Sentinel ───────────────────────────────── */
+
+.loading-sentinel {
+    text-align: center;
+    padding: var(--space-6);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ─── Empty State ────────────────────────────────────── */
+
+.empty-state {
+    text-align: center;
+    padding: var(--space-8);
+    grid-column: 1 / -1;
+}
+
+/* ─── Small Button ───────────────────────────────────── */
+
+.btn-sm {
+    padding: var(--space-1) var(--space-3);
+    font-size: 0.8rem;
+}
+
+/* ─── Utility ────────────────────────────────────────── */
+
+.text-right {
+    text-align: right;
+}
+
+.mono {
+    font-family: var(--font-mono);
+}
+
+/* ─── Search Dropdown ─────────────────────────────────── */
+
+.search-dropdown {
+    position: absolute;
+    top: calc(var(--topbar-height) - 4px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 200;
+    overflow: hidden;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    text-decoration: none;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background: var(--bg);
+}
+
+.search-result-name {
+    font-weight: 500;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-result-context {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.search-result-all {
+    justify-content: center;
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+/* ─── PDF Viewer Controls ─────────────────────────────── */
+
+.pdf-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+}
+
+#pdf-page-info {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    min-width: 100px;
+    text-align: center;
+}
+
+#pdf-canvas {
+    max-width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 /* ─── Responsive ─────────────────────────────────────── */
 
 @media (max-width: 768px) {

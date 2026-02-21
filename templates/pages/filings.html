@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Filings</h1>
+    <p class="text-muted">Campaign finance disclosure filings — Shasta County</p>
+</div>
+
+<div class="filter-bar">
+    <input type="text"
+           class="filter-input"
+           name="search"
+           placeholder="Search filer name..."
+           hx-get="/filings/list"
+           hx-trigger="keyup changed delay:300ms"
+           hx-target="#filings-grid"
+           hx-include=".filter-input"
+           value="">
+    <select class="filter-input"
+            name="form_type"
+            hx-get="/filings/list"
+            hx-trigger="change"
+            hx-target="#filings-grid"
+            hx-include=".filter-input">
+        <option value="">All Form Types</option>
+        {% for ft in form_types %}
+        <option value="{{ ft }}">{{ ft }}</option>
+        {% endfor %}
+    </select>
+    <select class="filter-input"
+            name="filer_id"
+            hx-get="/filings/list"
+            hx-trigger="change"
+            hx-target="#filings-grid"
+            hx-include=".filter-input">
+        <option value="">All Filers</option>
+        {% for filer in filers %}
+        <option value="{{ filer.filer_id }}">{{ filer.name }}</option>
+        {% endfor %}
+    </select>
+    <input type="date"
+           class="filter-input"
+           name="date_from"
+           hx-get="/filings/list"
+           hx-trigger="change"
+           hx-target="#filings-grid"
+           hx-include=".filter-input">
+    <input type="date"
+           class="filter-input"
+           name="date_to"
+           hx-get="/filings/list"
+           hx-trigger="change"
+           hx-target="#filings-grid"
+           hx-include=".filter-input">
+</div>
+
+<div id="filings-grid"
+     hx-get="/filings/list?page=1"
+     hx-trigger="load"
+     hx-swap="innerHTML">
+    <div class="loading-sentinel">Loading filings...</div>
+</div>
+{% endblock %}

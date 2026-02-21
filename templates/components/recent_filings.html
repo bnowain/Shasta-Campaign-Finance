@@ -1,0 +1,18 @@
+{% if filings %}
+{% for filing in filings %}
+<div class="status-row">
+    <div>
+        <a href="/filings/{{ filing.filing_id }}" style="text-decoration: none; color: var(--text);">
+            <strong>{{ filing.filer.name if filing.filer else 'Unknown' }}</strong>
+        </a>
+        <span class="tag tag-muted" style="margin-left: var(--space-2);">{{ filing.form_type }}</span>
+        {% if filing.amendment_seq and filing.amendment_seq > 0 %}
+        <span class="tag tag-warning">Amend</span>
+        {% endif %}
+    </div>
+    <span class="text-muted mono">{{ filing.filing_date.strftime('%Y-%m-%d') if filing.filing_date else '' }}</span>
+</div>
+{% endfor %}
+{% else %}
+<p class="text-muted">No filings yet. Use the Pull button or run the backfill CLI.</p>
+{% endif %}

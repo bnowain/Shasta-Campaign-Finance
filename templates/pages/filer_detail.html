@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="/filers">Filers</a>
+    <span class="breadcrumb-sep">/</span>
+    <span>{{ filer.name }}</span>
+</div>
+
+<div class="page-header">
+    <h1>{{ filer.name }}</h1>
+    <p class="text-muted">
+        {% if filer.filer_type %}<span class="tag tag-muted">{{ filer.filer_type }}</span>{% endif %}
+        {% if filer.status == 'active' %}
+        <span class="tag tag-success">Active</span>
+        {% elif filer.status == 'terminated' %}
+        <span class="tag tag-danger">Terminated</span>
+        {% endif %}
+    </p>
+</div>
+
+<div class="detail-meta-grid">
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Committee ID</span>
+        <span class="detail-meta-value mono">{{ filer.local_filer_id or 'N/A' }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">SOS ID</span>
+        <span class="detail-meta-value mono">{{ filer.sos_filer_id or 'N/A' }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Total Filings</span>
+        <span class="detail-meta-value mono">{{ "{:,}".format(filings|length) }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Transactions</span>
+        <span class="detail-meta-value mono">{{ "{:,}".format(txn_count) }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Total Amount</span>
+        <span class="detail-meta-value mono">${{ "{:,.2f}".format(txn_total) }}</span>
+    </div>
+    {% if filer.office %}
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Office</span>
+        <span class="detail-meta-value">{{ filer.office }}</span>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card" style="margin-top: var(--space-6);">
+    <div class="card-header">
+        <h3>Filing History</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        {% if filings %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Form</th>
+                    <th>Period</th>
+                    <th>Amendment</th>
+                    <th>Source</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for filing in filings %}
+                <tr>
+                    <td class="mono">
+                        <a href="/filings/{{ filing.filing_id }}">
+                            {{ filing.filing_date.strftime('%Y-%m-%d') if filing.filing_date else 'N/A' }}
+                        </a>
+                    </td>
+                    <td><span class="tag tag-muted">{{ filing.form_type }}</span></td>
+                    <td class="mono">
+                        {% if filing.period_start and filing.period_end %}
+                        {{ filing.period_start.strftime('%m/%d/%Y') }} &ndash; {{ filing.period_end.strftime('%m/%d/%Y') }}
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if filing.amendment_seq and filing.amendment_seq > 0 %}
+                        <span class="tag tag-warning">#{{ filing.amendment_seq }}</span>
+                        {% else %}
+                        Original
+                        {% endif %}
+                    </td>
+                    <td class="text-muted">{{ filing.data_source or 'api' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted" style="padding: var(--space-4);">No filings recorded.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
