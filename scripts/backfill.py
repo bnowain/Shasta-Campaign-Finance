@@ -1,7 +1,7 @@
 """Backfill CLI — download historical campaign finance data 2020-2026.
 
 Usage:
-  python scripts/backfill.py                    # Default: 2020-2026
+  python scripts/backfill.py                    # Default: 2021-2026
   python scripts/backfill.py --years 2024-2026  # Specific range
   python scripts/backfill.py --skip-pdfs        # Skip PDF downloads
   python scripts/backfill.py --skip-enrich      # Skip filing metadata API calls
@@ -505,7 +505,7 @@ async def main(args: argparse.Namespace):
         else:
             years = [int(args.years)]
     else:
-        years = list(range(2020, 2027))
+        years = list(range(2021, 2027))
 
     # Load resume state if requested
     if args.resume:
@@ -644,7 +644,7 @@ def cli():
         "--years",
         type=str,
         default=None,
-        help="Year or range (e.g. '2024' or '2020-2026'). Default: 2020-2026",
+        help="Year or range (e.g. '2024' or '2021-2026'). Default: 2021-2026",
     )
     parser.add_argument(
         "--skip-pdfs",
