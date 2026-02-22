@@ -4,9 +4,10 @@ from fastapi import APIRouter, Request, Depends, Query
 from fastapi.responses import HTMLResponse
 from sqlalchemy import select, func, or_, desc
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from app.db import get_db
-from app.models import Filer, Filing, Transaction
+from app.models import Filer, Filing, Transaction, ElectionCandidate
 
 router = APIRouter(tags=["filers"])
 
@@ -103,6 +104,32 @@ async def filer_detail(
     )
     txn_count, txn_total = stats.one()
 
+    # Contributions (Schedule A, C) vs Expenditures (Schedule E) vs other
+    contributions_result = await db.execute(
+        select(func.coalesce(func.sum(Transaction.amount), 0)).where(
+            Transaction.filing_id.in_(filing_ids_q),
+            Transaction.schedule.in_(["A", "C"]),
+        )
+    )
+    contributions_total = contributions_result.scalar() or 0
+
+    expenditures_result = await db.execute(
+        select(func.coalesce(func.sum(Transaction.amount), 0)).where(
+            Transaction.filing_id.in_(filing_ids_q),
+            Transaction.schedule == "E",
+        )
+    )
+    expenditures_total = expenditures_result.scalar() or 0
+
+    # Election history
+    election_links_result = await db.execute(
+        select(ElectionCandidate)
+        .options(joinedload(ElectionCandidate.election))
+        .where(ElectionCandidate.filer_id == filer_id)
+        .order_by(desc(ElectionCandidate.created_at))
+    )
+    election_links = election_links_result.unique().scalars().all()
+
     return templates.TemplateResponse("pages/filer_detail.html", {
         "request": request,
         "title": filer.name,
@@ -110,4 +137,7 @@ async def filer_detail(
         "filings": filings,
         "txn_count": txn_count,
         "txn_total": txn_total,
+        "contributions_total": contributions_total,
+        "expenditures_total": expenditures_total,
+        "election_links": election_links,
     })

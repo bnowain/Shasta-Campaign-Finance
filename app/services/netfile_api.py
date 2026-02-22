@@ -117,6 +117,39 @@ class NetFileClient:
             page += 1
         return all_filers
 
+    async def list_filings(self, page: int = 0, page_size: int = 100) -> dict:
+        """List all filings for the agency (paginated).
+
+        POST /api/public/campaign/list/filing
+        Same pagination pattern as list_filers.
+        """
+        client = await self._get_client()
+        resp = await client.post(
+            "/api/public/campaign/list/filing",
+            json={
+                "aid": self.aid,
+                "currentPageIndex": page,
+                "pageSize": page_size,
+            },
+        )
+        resp.raise_for_status()
+        return resp.json()
+
+    async def list_all_filings(self) -> list[dict]:
+        """Paginate through all filings and return the full list."""
+        all_filings = []
+        page = 0
+        while True:
+            data = await self.list_filings(page=page, page_size=100)
+            # Try common response keys
+            results = data.get("filings", data.get("results", []))
+            all_filings.extend(results)
+            total = data.get("totalMatchingCount", data.get("totalCount", 0))
+            if len(all_filings) >= total or not results:
+                break
+            page += 1
+        return all_filings
+
     async def get_transaction_types(self) -> dict:
         """Get transaction type lookup table.
 

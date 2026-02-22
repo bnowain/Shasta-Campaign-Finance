@@ -52,6 +52,13 @@ class Election(Base):
     name            = Column(String, nullable=False)
     election_type   = Column(String)        # primary, general, special, udel
     year            = Column(Integer, nullable=False)
+    netfile_election_id = Column(String, unique=True)
+    total_registered = Column(Integer)
+    total_ballots_cast = Column(Integer)
+    turnout_percentage = Column(Float)
+    results_certified = Column(Boolean, default=False)
+    data_source     = Column(String)        # netfile_portal, county_csv, manual
+    source_url      = Column(String)        # link to original results page
     created_at      = Column(DateTime, default=utcnow)
 
     candidates      = relationship("ElectionCandidate", back_populates="election")
@@ -212,14 +219,30 @@ class ElectionCandidate(Base):
     election_id     = Column(String, ForeignKey("elections.election_id"), nullable=False)
     filer_id        = Column(String, ForeignKey("filers.filer_id"), nullable=False)
     office_sought   = Column(String)
+    candidate_name  = Column(String)        # human name when filer is a committee
     party           = Column(String)
     is_measure      = Column(Boolean, default=False)
     measure_letter  = Column(String)
     position        = Column(String)        # support, oppose (for measures)
+    votes_received  = Column(Integer)
+    vote_percentage = Column(Float)
+    is_winner       = Column(Boolean)
+    is_runoff       = Column(Boolean)
+    finish_position = Column(Integer)       # 1st, 2nd, 3rd place
+    incumbent       = Column(Boolean)
+    result_source   = Column(String)        # county_csv, county_pdf, manual
+    result_notes    = Column(Text)
     created_at      = Column(DateTime, default=utcnow)
 
     election        = relationship("Election", back_populates="candidates")
     filer           = relationship("Filer", back_populates="election_links")
+
+    __table_args__ = (
+        UniqueConstraint("election_id", "filer_id", name="uq_election_candidate"),
+        Index("ix_ec_election", "election_id"),
+        Index("ix_ec_filer", "filer_id"),
+        Index("ix_ec_office", "office_sought"),
+    )
 
 
 # ─── SCRAPER STATE ────────────────────────────────────────────

@@ -30,10 +30,20 @@
 
 <div class="card">
     <div class="card-header">
-        <h3>Total Amount</h3>
+        <h3>Contributions</h3>
     </div>
     <div class="card-body">
-        <p class="stat-number">${{ "{:,.0f}".format(total_amount) }}</p>
-        <p class="text-muted">All transaction value</p>
+        <p class="stat-number">${{ "{:,.0f}".format(contributions_total) }}</p>
+        <p class="text-muted">Schedule A + C</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3>Expenditures</h3>
+    </div>
+    <div class="card-body">
+        <p class="stat-number">${{ "{:,.0f}".format(expenditures_total) }}</p>
+        <p class="text-muted">Schedule E</p>
     </div>
 </div>

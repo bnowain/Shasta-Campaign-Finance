@@ -21,6 +21,7 @@ from app.routers import filers as filers_router
 from app.routers import transactions as transactions_router
 from app.routers import stubs as stubs_router
 from app.routers import search as search_router
+from app.routers import elections as elections_router
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = BASE_DIR / "templates"
@@ -64,6 +65,7 @@ app.include_router(scraper.router)
 app.include_router(filings_router.router)
 app.include_router(filers_router.router)
 app.include_router(transactions_router.router)
+app.include_router(elections_router.router)
 app.include_router(stubs_router.router)
 app.include_router(search_router.router)
 
@@ -82,14 +84,28 @@ async def dashboard_stats(request: Request, db: AsyncSession = Depends(get_db)):
     filing_count = (await db.execute(select(func.count(Filing.filing_id)))).scalar() or 0
     filer_count = (await db.execute(select(func.count(Filer.filer_id)))).scalar() or 0
     txn_count = (await db.execute(select(func.count(Transaction.transaction_id)))).scalar() or 0
-    total_amount = (await db.execute(select(func.coalesce(func.sum(Transaction.amount), 0)))).scalar() or 0
+
+    # Contributions = Schedule A + C
+    contributions_total = (await db.execute(
+        select(func.coalesce(func.sum(Transaction.amount), 0)).where(
+            Transaction.schedule.in_(["A", "C"])
+        )
+    )).scalar() or 0
+
+    # Expenditures = Schedule E
+    expenditures_total = (await db.execute(
+        select(func.coalesce(func.sum(Transaction.amount), 0)).where(
+            Transaction.schedule == "E"
+        )
+    )).scalar() or 0
 
     return templates.TemplateResponse("components/dashboard_stats.html", {
         "request": request,
         "filing_count": filing_count,
         "filer_count": filer_count,
         "transaction_count": txn_count,
-        "total_amount": total_amount,
+        "contributions_total": contributions_total,
+        "expenditures_total": expenditures_total,
     })
 
 

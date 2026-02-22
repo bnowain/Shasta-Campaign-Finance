@@ -37,8 +37,12 @@
         <span class="detail-meta-value mono">{{ "{:,}".format(txn_count) }}</span>
     </div>
     <div class="detail-meta-item">
-        <span class="detail-meta-label">Total Amount</span>
-        <span class="detail-meta-value mono">${{ "{:,.2f}".format(txn_total) }}</span>
+        <span class="detail-meta-label">Contributions</span>
+        <span class="detail-meta-value mono">${{ "{:,.2f}".format(contributions_total) }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Expenditures</span>
+        <span class="detail-meta-value mono">${{ "{:,.2f}".format(expenditures_total) }}</span>
     </div>
     {% if filer.office %}
     <div class="detail-meta-item">
@@ -47,6 +51,57 @@
     </div>
     {% endif %}
 </div>
+
+{% if election_links %}
+<div class="card" style="margin-top: var(--space-6);">
+    <div class="card-header">
+        <h3>Election History</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Election</th>
+                    <th>Office</th>
+                    <th>Votes</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ec in election_links %}
+                <tr>
+                    <td>
+                        <a href="/elections/{{ ec.election.election_id }}">
+                            {{ ec.election.name }}
+                        </a>
+                    </td>
+                    <td>{{ ec.office_sought or '—' }}</td>
+                    <td class="mono">
+                        {% if ec.votes_received is not none %}
+                        {{ "{:,}".format(ec.votes_received) }}
+                        {% if ec.vote_percentage is not none %}
+                        ({{ "%.1f"|format(ec.vote_percentage) }}%)
+                        {% endif %}
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if ec.is_winner %}
+                        <span class="tag tag-success">Winner</span>
+                        {% elif ec.is_runoff %}
+                        <span class="tag tag-warning">Runoff</span>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
 
 <div class="card" style="margin-top: var(--space-6);">
     <div class="card-header">

@@ -1,0 +1,61 @@
+{% for election in elections %}
+<tr>
+    <td class="mono">
+        <a href="/elections/{{ election.election_id }}">
+            {{ election.date.strftime('%Y-%m-%d') if election.date else 'N/A' }}
+        </a>
+    </td>
+    <td>{{ election.name }}</td>
+    <td>
+        {% if election.election_type == 'primary' %}
+        <span class="tag tag-muted">Primary</span>
+        {% elif election.election_type == 'general' %}
+        <span class="tag tag-success">General</span>
+        {% elif election.election_type == 'special' %}
+        <span class="tag tag-warning">Special</span>
+        {% elif election.election_type == 'udel' %}
+        <span class="tag tag-muted">UDEL</span>
+        {% else %}
+        <span class="tag tag-muted">{{ election.election_type or 'Unknown' }}</span>
+        {% endif %}
+    </td>
+    <td class="mono">{{ candidate_counts.get(election.election_id, 0) }}</td>
+    <td>
+        {% if election.results_certified %}
+        <span class="tag tag-success">Certified</span>
+        {% elif candidate_counts.get(election.election_id, 0) > 0 %}
+        <span class="tag tag-muted">Mapped</span>
+        {% else %}
+        <span class="tag tag-muted">Pending</span>
+        {% endif %}
+    </td>
+    <td>
+        {% if election.data_source == 'clarity' %}
+        <span class="tag tag-success" style="font-size:0.65rem;">Clarity</span>
+        {% elif election.data_source == 'county_csv' %}
+        <span class="tag tag-muted" style="font-size:0.65rem;">CSV</span>
+        {% elif election.data_source == 'county_pdf' %}
+        <span class="tag tag-warning" style="font-size:0.65rem;">PDF*</span>
+        {% elif election.data_source == 'netfile_portal' %}
+        <span class="tag tag-muted" style="font-size:0.65rem;">Portal</span>
+        {% elif election.data_source %}
+        <span class="tag tag-muted" style="font-size:0.65rem;">{{ election.data_source }}</span>
+        {% else %}
+        —
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+
+{% if not elections %}
+<tr><td colspan="6" class="empty-state text-muted">No elections match your filters.</td></tr>
+{% endif %}
+
+{% if has_more %}
+<tr class="loading-sentinel"
+    hx-get="/elections/list?page={{ page + 1 }}&year={{ year }}&election_type={{ election_type }}&search={{ search }}"
+    hx-trigger="revealed"
+    hx-swap="outerHTML">
+    <td colspan="6">Loading more...</td>
+</tr>
+{% endif %}

@@ -127,6 +127,21 @@ async def filing_detail(
     )
     txn_count, txn_total = txn_stats.one()
 
+    # Schedule breakdown
+    schedule_stats = await db.execute(
+        select(
+            Transaction.schedule,
+            func.count(Transaction.transaction_id),
+            func.coalesce(func.sum(Transaction.amount), 0),
+        ).where(Transaction.filing_id == filing_id)
+        .group_by(Transaction.schedule)
+        .order_by(Transaction.schedule)
+    )
+    schedule_breakdown = [
+        {"schedule": s or "—", "count": c, "total": t}
+        for s, c, t in schedule_stats.all()
+    ]
+
     # Amendment chain
     amendments = []
     if filing.netfile_filing_id:
@@ -146,6 +161,7 @@ async def filing_detail(
         "filing": filing,
         "txn_count": txn_count,
         "txn_total": txn_total,
+        "schedule_breakdown": schedule_breakdown,
         "amendments": amendments,
     })
 
@@ -162,7 +178,7 @@ async def filing_transactions(
     result = await db.execute(
         select(Transaction)
         .where(Transaction.filing_id == filing_id)
-        .order_by(Transaction.transaction_date.desc(), Transaction.amount.desc())
+        .order_by(Transaction.schedule, Transaction.transaction_date.desc(), Transaction.amount.desc())
     )
     transactions = result.scalars().all()
 

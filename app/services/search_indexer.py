@@ -4,7 +4,7 @@ from sqlalchemy import text, select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import AsyncSessionLocal
-from app.models import Filer, Transaction
+from app.models import Filer, Transaction, Election
 
 
 async def rebuild_search_index():
@@ -50,8 +50,23 @@ async def rebuild_search_index():
                 {"etype": "transaction_entity", "eid": name, "name": name, "ctx": context},
             )
 
+        # Index elections
+        elections = (await session.execute(select(Election))).scalars().all()
+        for elec in elections:
+            context = " ".join(filter(None, [
+                elec.election_type, str(elec.year) if elec.year else None,
+                elec.data_source,
+            ]))
+            await session.execute(
+                text(
+                    "INSERT INTO search_index(entity_type, entity_id, name, context) "
+                    "VALUES(:etype, :eid, :name, :ctx)"
+                ),
+                {"etype": "election", "eid": elec.election_id, "name": elec.name, "ctx": context},
+            )
+
         await session.commit()
-        return {"filers": len(filers), "transaction_entities": len(txn_names)}
+        return {"filers": len(filers), "transaction_entities": len(txn_names), "elections": len(elections)}
 
 
 async def search_fts(query: str, limit: int = 20, db: AsyncSession = None):
@@ -111,6 +126,20 @@ async def search_fts(query: str, limit: int = 20, db: AsyncSession = None):
                     "context": f.filer_type or "",
                     "rank": 0,
                 })
+
+            remaining = limit - len(results)
+            if remaining > 0:
+                elecs = (await db.execute(
+                    select(Election).where(Election.name.ilike(pattern)).limit(remaining)
+                )).scalars().all()
+                for e in elecs:
+                    results.append({
+                        "entity_type": "election",
+                        "entity_id": e.election_id,
+                        "name": e.name,
+                        "context": e.election_type or "",
+                        "rank": 0,
+                    })
 
             remaining = limit - len(results)
             if remaining > 0:

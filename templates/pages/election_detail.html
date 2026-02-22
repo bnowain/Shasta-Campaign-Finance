@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="/elections">Elections</a>
+    <span class="breadcrumb-sep">/</span>
+    <span>{{ election.name }}</span>
+</div>
+
+<div class="page-header">
+    <h1>
+        {{ election.name }}
+        {% if election.election_type == 'primary' %}
+        <span class="tag tag-muted">Primary</span>
+        {% elif election.election_type == 'general' %}
+        <span class="tag tag-success">General</span>
+        {% elif election.election_type == 'special' %}
+        <span class="tag tag-warning">Special</span>
+        {% elif election.election_type == 'udel' %}
+        <span class="tag tag-muted">UDEL</span>
+        {% endif %}
+    </h1>
+    <p class="text-muted">
+        {{ election.date.strftime('%B %d, %Y') if election.date else '' }}
+        {% if election.results_certified %}
+        &mdash; <span class="tag tag-success">Results Certified</span>
+        {% endif %}
+    </p>
+</div>
+
+<div class="detail-meta-grid">
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Races</span>
+        <span class="detail-meta-value mono">{{ total_races }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Candidates</span>
+        <span class="detail-meta-value mono">{{ total_candidates }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Measures</span>
+        <span class="detail-meta-value mono">{{ measures|length }}</span>
+    </div>
+    {% if election.turnout_percentage %}
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Turnout</span>
+        <span class="detail-meta-value mono">{{ "%.1f"|format(election.turnout_percentage) }}%</span>
+    </div>
+    {% endif %}
+    {% if election.total_ballots_cast %}
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Ballots Cast</span>
+        <span class="detail-meta-value mono">{{ "{:,}".format(election.total_ballots_cast) }}</span>
+    </div>
+    {% endif %}
+    {% if election.total_registered %}
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Registered Voters</span>
+        <span class="detail-meta-value mono">{{ "{:,}".format(election.total_registered) }}</span>
+    </div>
+    {% endif %}
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Data Source</span>
+        <span class="detail-meta-value">{{ election.data_source or 'N/A' }}</span>
+    </div>
+</div>
+
+{% if election.source_url %}
+<div style="margin-top: var(--space-4);">
+    <a href="{{ election.source_url }}" target="_blank" rel="noopener" class="btn btn-ghost">
+        View original results (Shasta County)
+    </a>
+</div>
+{% endif %}
+
+{% for office, candidates in offices.items() %}
+<div class="card" style="margin-top: var(--space-6);">
+    <div class="card-header">
+        <h3>{{ office }}</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Candidate</th>
+                    {% if has_results %}
+                    <th class="text-right">Votes</th>
+                    <th class="text-right">%</th>
+                    {% endif %}
+                    <th>Result</th>
+                    <th>Filings</th>
+                    {% if has_results %}
+                    <th>Source</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in candidates %}
+                <tr>
+                    <td>
+                        {% if c.filer %}
+                        <a href="/filers/{{ c.filer.filer_id }}">{{ c.candidate_name or c.filer.name }}</a>
+                        {% else %}
+                        {{ c.candidate_name or 'Unknown' }}
+                        {% endif %}
+                        {% if c.incumbent %}
+                        <span class="tag tag-muted" style="font-size:0.6rem;">INC</span>
+                        {% endif %}
+                        {% if c.party %}
+                        <span class="text-muted" style="font-size:0.75rem;"> ({{ c.party }})</span>
+                        {% endif %}
+                    </td>
+                    {% if has_results %}
+                    <td class="text-right mono">
+                        {% if c.votes_received is not none %}
+                        {{ "{:,}".format(c.votes_received) }}
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td class="text-right mono">
+                        {% if c.vote_percentage is not none %}
+                        {{ "%.1f"|format(c.vote_percentage) }}%
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                    <td>
+                        {% if c.is_winner %}
+                        <span class="tag tag-success">Winner</span>
+                        {% elif c.is_runoff %}
+                        <span class="tag tag-warning">Runoff</span>
+                        {% elif c.finish_position %}
+                        <span class="text-muted">{{ c.finish_position }}{{ 'st' if c.finish_position == 1 else 'nd' if c.finish_position == 2 else 'rd' if c.finish_position == 3 else 'th' }}</span>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if c.filer %}
+                        <a href="/filers/{{ c.filer.filer_id }}" class="btn btn-ghost" style="padding: 2px 8px; font-size: 0.75rem;">
+                            View Filings
+                        </a>
+                        {% endif %}
+                    </td>
+                    {% if has_results %}
+                    <td>
+                        {% if c.result_source == 'clarity' %}
+                        <span class="tag tag-success" style="font-size:0.65rem;">Clarity</span>
+                        {% elif c.result_source == 'county_pdf' %}
+                        <span class="tag tag-warning" style="font-size:0.65rem;">PDF*</span>
+                        {% elif c.result_source == 'county_csv' %}
+                        <span class="tag tag-muted" style="font-size:0.65rem;">CSV</span>
+                        {% elif c.result_source %}
+                        <span class="tag tag-muted" style="font-size:0.65rem;">{{ c.result_source }}</span>
+                        {% endif %}
+                        {% if c.result_notes %}
+                        <span class="text-muted" style="font-size:0.7rem;" title="{{ c.result_notes }}">*</span>
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endfor %}
+
+{% if measures %}
+<div class="card" style="margin-top: var(--space-6);">
+    <div class="card-header">
+        <h3>Measures</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Measure</th>
+                    <th>Position</th>
+                    <th>Committee</th>
+                    {% if has_results %}
+                    <th class="text-right">Votes</th>
+                    <th class="text-right">%</th>
+                    <th>Result</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in measures %}
+                <tr>
+                    <td>
+                        {% if m.measure_letter %}
+                        <span class="tag tag-muted">{{ m.measure_letter }}</span>
+                        {% endif %}
+                        {{ m.office_sought or m.candidate_name or 'Unknown' }}
+                    </td>
+                    <td>
+                        {% if m.position == 'support' %}
+                        <span class="tag tag-success">Support</span>
+                        {% elif m.position == 'oppose' %}
+                        <span class="tag tag-danger">Oppose</span>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if m.filer %}
+                        <a href="/filers/{{ m.filer.filer_id }}">{{ m.filer.name }}</a>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    {% if has_results %}
+                    <td class="text-right mono">
+                        {% if m.votes_received is not none %}{{ "{:,}".format(m.votes_received) }}{% else %}—{% endif %}
+                    </td>
+                    <td class="text-right mono">
+                        {% if m.vote_percentage is not none %}{{ "%.1f"|format(m.vote_percentage) }}%{% else %}—{% endif %}
+                    </td>
+                    <td>
+                        {% if m.is_winner %}
+                        <span class="tag tag-success">Passed</span>
+                        {% elif m.is_winner == false %}
+                        <span class="tag tag-danger">Failed</span>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% if not offices and not measures %}
+<div class="card" style="margin-top: var(--space-6);">
+    <div class="card-body">
+        <p class="text-muted">No candidates or measures have been linked to this election yet.</p>
+    </div>
+</div>
+{% endif %}
+
+{% if source_files %}
+<div class="card" style="margin-top: var(--space-6);">
+    <div class="card-header">
+        <h3>Source Files</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>File</th>
+                    <th>Type</th>
+                    <th class="text-right">Size</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in source_files %}
+                <tr>
+                    <td>{{ f.filename }}</td>
+                    <td>
+                        {% if f.ext == '.pdf' %}
+                        <span class="tag tag-warning" style="font-size:0.65rem;">PDF</span>
+                        {% elif f.ext == '.xlsx' %}
+                        <span class="tag tag-success" style="font-size:0.65rem;">Excel</span>
+                        {% elif f.ext == '.csv' %}
+                        <span class="tag tag-muted" style="font-size:0.65rem;">CSV</span>
+                        {% elif f.ext == '.html' %}
+                        <span class="tag tag-muted" style="font-size:0.65rem;">HTML</span>
+                        {% else %}
+                        <span class="tag tag-muted" style="font-size:0.65rem;">{{ f.ext }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-right mono">
+                        {% if f.size >= 1048576 %}
+                        {{ "%.1f"|format(f.size / 1048576) }} MB
+                        {% elif f.size >= 1024 %}
+                        {{ "%.0f"|format(f.size / 1024) }} KB
+                        {% else %}
+                        {{ f.size }} B
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="/elections/files/{{ f.slug }}/{{ f.filename }}"
+                           class="btn btn-ghost" style="padding: 2px 8px; font-size: 0.75rem;"
+                           download>
+                            Download
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

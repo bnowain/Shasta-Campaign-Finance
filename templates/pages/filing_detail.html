@@ -53,6 +53,42 @@
     </div>
 </div>
 
+{% if schedule_breakdown|length > 1 %}
+<div class="card" style="margin-top: var(--space-6);">
+    <div class="card-header">
+        <h3>Schedule Breakdown</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Schedule</th>
+                    <th class="text-right">Count</th>
+                    <th class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in schedule_breakdown %}
+                <tr>
+                    <td>
+                        <span class="tag tag-muted">{{ row.schedule }}</span>
+                        {% if row.schedule == 'A' %} Monetary Contributions
+                        {% elif row.schedule == 'B1' %} Loans Received
+                        {% elif row.schedule == 'C' %} Nonmonetary Contributions
+                        {% elif row.schedule == 'E' %} Payments Made
+                        {% elif row.schedule == 'F' %} Accrued Expenses
+                        {% endif %}
+                    </td>
+                    <td class="text-right mono">{{ "{:,}".format(row.count) }}</td>
+                    <td class="text-right mono">${{ "{:,.2f}".format(row.total) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
 <div class="detail-actions">
     {% if filing.pdf_downloaded and filing.netfile_filing_id %}
     <button class="btn btn-primary"

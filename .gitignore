@@ -33,6 +33,10 @@ exports/*.csv
 exports/.backfill_resume.json
 logs/*.log
 
+# Downloaded election data (large files, re-downloadable)
+data/elections/clarity/
+data/elections/sample_*
+
 # OS
 Thumbs.db
 .DS_Store

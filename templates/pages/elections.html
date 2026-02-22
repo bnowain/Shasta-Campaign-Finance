@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Elections</h1>
+    <p class="text-muted">Shasta County election results and candidate tracking (2016&ndash;2026)</p>
+</div>
+
+<div class="filter-bar">
+    <input type="text"
+           class="filter-input"
+           name="search"
+           placeholder="Search elections..."
+           hx-get="/elections/list"
+           hx-trigger="keyup changed delay:300ms"
+           hx-target="#elections-table-body"
+           hx-include=".filter-input"
+           value="">
+    <select class="filter-input"
+            name="year"
+            hx-get="/elections/list"
+            hx-trigger="change"
+            hx-target="#elections-table-body"
+            hx-include=".filter-input">
+        <option value="">All Years</option>
+        {% for y in years %}
+        <option value="{{ y }}">{{ y }}</option>
+        {% endfor %}
+    </select>
+    <select class="filter-input"
+            name="election_type"
+            hx-get="/elections/list"
+            hx-trigger="change"
+            hx-target="#elections-table-body"
+            hx-include=".filter-input">
+        <option value="">All Types</option>
+        {% for t in election_types %}
+        <option value="{{ t }}">{{ t|capitalize }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Election</th>
+                    <th>Type</th>
+                    <th>Candidates</th>
+                    <th>Status</th>
+                    <th>Source</th>
+                </tr>
+            </thead>
+            <tbody id="elections-table-body"
+                   hx-get="/elections/list?page=1"
+                   hx-trigger="load"
+                   hx-swap="innerHTML">
+                <tr><td colspan="6" class="loading-sentinel">Loading elections...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
