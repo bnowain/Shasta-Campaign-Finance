@@ -1,0 +1,35 @@
+<div class="settings-progress" id="settings-elections-progress">
+    <div class="progress-bar">
+        <div class="progress-fill" id="elections-progress-fill" style="width: 0%"></div>
+    </div>
+    <span class="text-muted" id="elections-progress-text">Starting elections check...</span>
+</div>
+
+<script>
+(function() {
+    var source = new EventSource('/settings/stream');
+    window._settingsEventSource = source;
+
+    source.addEventListener('progress', function(e) {
+        var data = JSON.parse(e.data);
+        var fill = document.getElementById('elections-progress-fill');
+        var text = document.getElementById('elections-progress-text');
+        if (fill) fill.style.width = data.percent + '%';
+        if (text) text.textContent = data.message;
+    });
+
+    source.addEventListener('complete', function(e) {
+        source.close();
+        htmx.ajax('GET', '/settings/task-complete', {target: '#elections-action', swap: 'innerHTML'});
+    });
+
+    source.addEventListener('error_state', function(e) {
+        source.close();
+        htmx.ajax('GET', '/settings/task-error', {target: '#elections-action', swap: 'innerHTML'});
+    });
+
+    source.onerror = function() {
+        source.close();
+    };
+})();
+</script>

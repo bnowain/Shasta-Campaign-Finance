@@ -1,0 +1,32 @@
+{% if watched_filers %}
+<table class="data-table" style="width: 100%;">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Notes</th>
+            <th>Added</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for wf in watched_filers %}
+        <tr>
+            <td>{{ wf.name }}</td>
+            <td class="text-muted">{{ wf.notes or "" }}</td>
+            <td class="text-muted">{{ wf.created_at.strftime("%Y-%m-%d") if wf.created_at else "" }}</td>
+            <td style="text-align: right;">
+                <button class="btn btn-ghost btn-sm"
+                        hx-delete="/settings/watched-filers/{{ wf.id }}"
+                        hx-target="#watched-filers-list"
+                        hx-swap="innerHTML"
+                        hx-confirm="Remove '{{ wf.name }}' from watched filers?">
+                    Remove
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="text-muted">No watched filers yet. Add one above.</p>
+{% endif %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Settings</h1>
+    <p class="text-muted">Manage data sources and synchronization</p>
+</div>
+
+<!-- Watched Filers -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-header">
+        <h3>Watched Filers</h3>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: 1rem;">
+            Add filer names to watch for. These will be searched during "Check Filings" and matched to NetFile records.
+        </p>
+        <form hx-post="/settings/watched-filers/add"
+              hx-target="#watched-filers-list"
+              hx-swap="innerHTML"
+              style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+            <input type="text" name="name" placeholder="Committee or filer name..."
+                   class="form-input" style="flex: 1;" required>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+        <div id="watched-filers-list">
+            {% include "components/settings_watched_rows.html" %}
+        </div>
+    </div>
+</div>
+
+<!-- Election Data -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-header">
+        <h3>Election Data</h3>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: 1rem;">
+            Sync filers from the NetFile API, scrape the portal for elections and candidates, then re-link candidates to their campaign committees.
+        </p>
+        <div id="elections-action">
+            {% include "components/settings_elections_idle.html" %}
+        </div>
+    </div>
+</div>
+
+<!-- Filing Data -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-header">
+        <h3>Filing Data</h3>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: 1rem;">
+            Sync filers, check watched filer names, scan the RSS feed for new filings, and auto-ingest any discovered filings.
+        </p>
+        <div id="filings-action">
+            {% include "components/settings_filings_idle.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}

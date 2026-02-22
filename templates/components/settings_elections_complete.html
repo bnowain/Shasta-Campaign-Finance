@@ -1,0 +1,14 @@
+<div class="settings-complete">
+    <span class="tag tag-success">Done</span>
+    <span class="text-muted" style="margin-left: 0.5rem;">
+        {{ filers_synced }} filer{{ "s" if filers_synced != 1 else "" }} synced,
+        {{ candidates_linked }} candidate{{ "s" if candidates_linked != 1 else "" }} linked
+        ({{ elapsed }}s)
+    </span>
+    <button class="btn btn-ghost" style="margin-left: 0.5rem;"
+            hx-get="/settings/task-dismiss"
+            hx-target="#elections-action"
+            hx-swap="innerHTML">
+        Dismiss
+    </button>
+</div>

@@ -272,3 +272,13 @@ class RssFeedState(Base):
     last_guid       = Column(String)
     last_polled     = Column(DateTime)
     last_build_date = Column(String)
+
+
+class WatchedFiler(Base):
+    """User-defined filer names to watch for in NetFile API searches."""
+    __tablename__ = "watched_filers"
+
+    id              = Column(String, primary_key=True, default=gen_id)
+    name            = Column(String, nullable=False, unique=True)
+    notes           = Column(Text)
+    created_at      = Column(DateTime, default=utcnow)

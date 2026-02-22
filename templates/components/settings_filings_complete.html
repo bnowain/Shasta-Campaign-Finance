@@ -1,0 +1,15 @@
+<div class="settings-complete">
+    <span class="tag tag-success">Done</span>
+    <span class="text-muted" style="margin-left: 0.5rem;">
+        {{ filers_synced }} filer{{ "s" if filers_synced != 1 else "" }} synced,
+        {{ filings_discovered }} filing{{ "s" if filings_discovered != 1 else "" }} discovered,
+        {{ filings_ingested }} ingested
+        ({{ elapsed }}s)
+    </span>
+    <button class="btn btn-ghost" style="margin-left: 0.5rem;"
+            hx-get="/settings/task-dismiss"
+            hx-target="#filings-action"
+            hx-swap="innerHTML">
+        Dismiss
+    </button>
+</div>

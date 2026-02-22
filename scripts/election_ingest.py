@@ -27,7 +27,8 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import joinedload, selectinload
 
 from app.db import AsyncSessionLocal, init_db
-from app.models import Election, ElectionCandidate, Filer
+from app.models import Election, ElectionCandidate, Filer, Filing
+from app.services.candidate_matcher import match_candidate_to_filer
 
 logging.basicConfig(
     level=logging.INFO,
@@ -57,6 +58,25 @@ async def phase_a(min_year: int = 2016, max_year: int = 2026):
         for f in filers:
             filer_by_name_lower.setdefault(f.name.lower().strip(), []).append(f)
         logger.info("Loaded %d existing filers for matching", len(filers))
+
+        # Build filer_dicts for candidate_matcher (filers with filings)
+        from sqlalchemy import func as sqlfunc
+        filer_filing_counts = dict(
+            (await session.execute(
+                select(Filing.filer_id, sqlfunc.count(Filing.filing_id))
+                .group_by(Filing.filer_id)
+            )).all()
+        )
+        filer_dicts = [
+            {
+                "filer_id": f.filer_id,
+                "name": f.name,
+                "filing_count": filer_filing_counts.get(f.filer_id, 0),
+                "last_filing_date": "",
+            }
+            for f in filers
+            if filer_filing_counts.get(f.filer_id, 0) > 0
+        ]
 
         elections_created = 0
         elections_updated = 0
@@ -91,6 +111,7 @@ async def phase_a(min_year: int = 2016, max_year: int = 2026):
                 filer = _match_filer(
                     sc.portal_filer_id, sc.name,
                     filer_by_netfile_id, filer_by_local_id, filer_by_name_lower,
+                    filer_dicts=filer_dicts, election_year=se.year,
                 )
 
                 if not filer:
@@ -146,8 +167,14 @@ def _match_filer(
     by_netfile_id: dict,
     by_local_id: dict,
     by_name_lower: dict,
+    filer_dicts: list[dict] | None = None,
+    election_year: int = 2024,
 ) -> Filer | None:
-    """Match a scraped candidate to an existing Filer record."""
+    """Match a scraped candidate to an existing Filer record.
+
+    Uses portal_id/exact-name matching first, then falls back to the
+    candidate_matcher scoring algorithm for name-based matching.
+    """
     # 1. Exact match by NetFile portal ID
     if portal_id and portal_id in by_netfile_id:
         return by_netfile_id[portal_id]
@@ -158,22 +185,17 @@ def _match_filer(
     if len(matches) == 1:
         return matches[0]
 
-    # 3. Try fuzzy matching if thefuzz is available
-    try:
-        from thefuzz import fuzz
-        best_score = 0
-        best_filer = None
-        for filer_name_lower, filer_list in by_name_lower.items():
-            score = fuzz.ratio(key, filer_name_lower)
-            if score > best_score and score >= 85:
-                best_score = score
-                best_filer = filer_list[0]
-        if best_filer:
-            logger.debug("Fuzzy match: '%s' -> '%s' (score=%d)",
-                         name, best_filer.name, best_score)
-            return best_filer
-    except ImportError:
-        pass
+    # 3. Use candidate_matcher scoring algorithm
+    if filer_dicts:
+        result = match_candidate_to_filer(name, election_year, filer_dicts)
+        if result and result.matched_filer_id:
+            # Look up the actual Filer object
+            for filer_list in by_name_lower.values():
+                for f in filer_list:
+                    if f.filer_id == result.matched_filer_id:
+                        logger.debug("Candidate match: '%s' -> '%s' (score=%d, %s)",
+                                     name, f.name, result.score, result.method)
+                        return f
 
     return None
 
