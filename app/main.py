@@ -15,7 +15,7 @@ from app.db import init_db, get_db
 from app.config import APP_PORT, ATLAS_SPOKE_NAME
 import app.models  # noqa: F401 — register all ORM models with Base before init_db
 from app.models import Filing, Filer, Transaction, Person, WatchedFiler  # noqa: F401
-from app.routers import system, atlas, scraper
+from app.routers import system, atlas, scraper, api as api_router
 from app.routers import filings as filings_router
 from app.routers import filers as filers_router
 from app.routers import transactions as transactions_router
@@ -62,6 +62,7 @@ templates.env.filters["number_format"] = number_format
 # Routers
 app.include_router(system.router)
 app.include_router(atlas.router)
+app.include_router(api_router.router)
 app.include_router(scraper.router)
 app.include_router(filings_router.router)
 app.include_router(filers_router.router)

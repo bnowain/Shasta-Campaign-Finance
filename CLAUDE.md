@@ -9,9 +9,16 @@ Shasta County campaign finance disclosure tracker. Spoke app in the Atlas hub-an
 - **Data source:** NetFile Connect2 public API (agency ID: CSHA)
 
 ## Architecture
-- Atlas spoke (hub at :8800)
-- Sibling spokes: civic_media (:8833), Shasta-DB (:8844), article-tracker (:8866), Facebook-Offline (:8877), Shasta-PRA-Backup (:8888)
+- Atlas spoke (hub at :8888)
+- Sibling spokes: civic_media (:8000), Shasta-DB (:8844), article-tracker (:5000), Facebook-Offline (:8147), Shasta-PRA-Backup (:8845), Facebook-Monitor (:8150)
 - Person model is schema-compatible across all spokes for Atlas People search
+
+**Cross-spoke rules:**
+- This app must remain independently functional without Atlas or any other spoke.
+- No direct spoke-to-spoke dependencies. All cross-app communication goes through Atlas.
+  **Approved exceptions** (documented peer service calls):
+  - `Shasta-PRA-Backup → civic_media POST /api/transcribe` — Transcription-as-a-Service
+  New cross-spoke calls must be approved and added to this exception list.
 
 ## Key Files
 - `app/config.py` — Central config, paths, env vars
@@ -58,3 +65,13 @@ Shasta County campaign finance disclosure tracker. Spoke app in the Atlas hub-an
 - Phase 4: Backfill CLI (DONE) — Excel export, historical data (407 filers, 208 filings, 5,978 txns)
 - Phase 5: People & Transactions (stub) — tagging, fuzzy matching
 - Phase 6: Atlas Integration (stub) — people search, elections
+
+## Master Schema Reference
+
+**`E:\0-Automated-Apps\MASTER_SCHEMA.md`** contains the canonical cross-project
+database schema. If you add, remove, or modify any database tables or fields in
+this project, **you must update the Master Schema** to keep it in sync. The agent
+is authorized and encouraged to edit that file directly.
+
+**`E:\0-Automated-Apps\MASTER_PROJECT.md`** describes the overall ecosystem
+architecture and how all projects interconnect.
