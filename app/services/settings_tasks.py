@@ -222,21 +222,21 @@ async def run_check_people():
         try:
             from app.services.people_linker import link_filers_to_people, link_unlinked_transactions
 
-            # Step 1: Link filers
-            settings_state.set_progress(1, 2, "Linking filers",
-                                        "Matching filers to people records...")
+            # Step 1: Link candidates to people
+            settings_state.set_progress(1, 2, "Linking candidates",
+                                        "Matching election candidates to people records...")
             async with AsyncSessionLocal() as db:
                 filer_summary = await link_filers_to_people(db)
-            logger.info("Filer linking: %s", filer_summary)
+            logger.info("Candidate linking: %s", filer_summary)
 
-            # Step 2: Link transactions
+            # Step 2: Link transactions to people (individuals only)
             settings_state.set_progress(2, 2, "Linking transactions",
-                                        "Matching transactions to people records...")
+                                        "Matching transaction names to people records...")
             async with AsyncSessionLocal() as db:
                 txn_summary = await link_unlinked_transactions(db)
             logger.info("Transaction linking: %s", txn_summary)
 
-            total_linked = filer_summary["filers_linked"] + txn_summary["linked"]
+            total_linked = filer_summary["candidates_linked"] + txn_summary["linked"]
             total_created = filer_summary["people_created"] + txn_summary["created_people"]
             total_review = filer_summary["flagged_review"] + txn_summary["flagged_review"]
 

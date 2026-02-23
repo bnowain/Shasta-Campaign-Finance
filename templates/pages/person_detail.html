@@ -13,7 +13,7 @@
             <h1>{{ person.canonical_name }}</h1>
             <p class="text-muted">
                 {% if person.entity_type %}
-                <span class="tag {% if person.entity_type == 'individual' %}tag-muted{% elif person.entity_type == 'committee' %}tag-warning{% else %}tag-success{% endif %}">
+                <span class="tag {% if person.entity_type == 'individual' %}tag-muted{% else %}tag-success{% endif %}">
                     {{ person.entity_type }}
                 </span>
                 {% endif %}
@@ -39,7 +39,6 @@
                        value="{{ person.canonical_name }}" placeholder="Name" required>
                 <select name="entity_type" class="form-input filter-input">
                     <option value="individual" {% if person.entity_type == 'individual' %}selected{% endif %}>Individual</option>
-                    <option value="committee" {% if person.entity_type == 'committee' %}selected{% endif %}>Committee</option>
                     <option value="organization" {% if person.entity_type == 'organization' %}selected{% endif %}>Organization</option>
                 </select>
                 <textarea name="notes" class="form-input filter-input" rows="2"

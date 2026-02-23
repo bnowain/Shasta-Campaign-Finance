@@ -206,81 +206,23 @@ async def link_filers_to_people(
     db: AsyncSession,
     progress_cb=None,
 ) -> dict:
-    """Create/link Person records for filers and election candidates.
+    """Link election candidates to Person records via FilerPerson.
 
-    For each filer with filings: create/find Person (entity_type="committee"),
-    link via FilerPerson (role="committee").
+    Committees/PACs live in the Filer table — they are NOT Person records.
+    Only actual humans (candidates, treasurers) get Person records.
 
-    For each ElectionCandidate with candidate_name: create/find Person
-    (entity_type="individual"), link via FilerPerson (role="candidate").
+    Currently links: ElectionCandidate names → Person (role="candidate").
+    Future: Form 460 treasurer names → Person (role="treasurer").
 
     Returns summary dict.
     """
     summary = {
-        "filers_linked": 0,
         "people_created": 0,
         "candidates_linked": 0,
         "flagged_review": 0,
     }
 
-    # Get filers that have filings
-    filers_with_filings = (await db.execute(
-        select(Filer)
-        .where(Filer.filer_id.in_(select(Filing.filer_id).distinct()))
-    )).scalars().all()
-
     all_people = list((await db.execute(select(Person))).scalars().all())
-
-    total_items = len(filers_with_filings)
-
-    # Link filers as committees
-    for i, filer in enumerate(filers_with_filings):
-        if progress_cb:
-            progress_cb(i + 1, total_items, "Linking filers")
-
-        # Check if already linked
-        existing_link = (await db.execute(
-            select(FilerPerson).where(
-                FilerPerson.filer_id == filer.filer_id,
-                FilerPerson.role == "committee",
-            )
-        )).scalars().first()
-
-        if existing_link:
-            continue
-
-        norm_name = normalize_entity_name(filer.name)
-        if not norm_name:
-            continue
-
-        person, confidence = await match_to_person(norm_name, db, all_people)
-
-        if not person:
-            # Create new Person for this filer
-            person = Person(
-                canonical_name=norm_name,
-                entity_type="committee",
-            )
-            db.add(person)
-            await db.flush()
-            all_people.append(person)
-            summary["people_created"] += 1
-            confidence = 1.0
-
-        needs_review = 0.80 <= confidence < 0.95
-        if needs_review:
-            summary["flagged_review"] += 1
-
-        link = FilerPerson(
-            filer_id=filer.filer_id,
-            person_id=person.person_id,
-            role="committee",
-            match_confidence=confidence,
-            needs_review=needs_review,
-            source="auto",
-        )
-        db.add(link)
-        summary["filers_linked"] += 1
 
     # Link election candidates as individuals
     candidates = (await db.execute(
@@ -291,7 +233,11 @@ async def link_filers_to_people(
         .where(ElectionCandidate.candidate_name != "")
     )).unique().scalars().all()
 
-    for ec in candidates:
+    total_candidates = len(candidates)
+    for i, ec in enumerate(candidates):
+        if progress_cb:
+            progress_cb(i + 1, total_candidates, "Linking candidates")
+
         # Skip measure votes
         cand_upper = ec.candidate_name.upper().strip()
         if cand_upper in ("YES", "NO", "BONDS", "BONDS - YES", "BONDS - NO"):
@@ -399,14 +345,19 @@ async def link_unlinked_transactions(
             summary["skipped"] += count
             continue
 
+        # Skip committees/organizations — they live in the Filer table, not Person
+        det_type = _detect_entity_type(entity_name, entity_type_code)
+        if det_type == "committee":
+            summary["skipped"] += count
+            continue
+
         person, confidence = await match_to_person(norm_name, db, all_people)
 
         if confidence < min_confidence and not person:
-            # Below threshold and no exact match — create new person
-            det_type = _detect_entity_type(entity_name, entity_type_code)
+            # Below threshold and no exact match — create new individual person
             person = Person(
                 canonical_name=norm_name,
-                entity_type=det_type,
+                entity_type="individual",
             )
             db.add(person)
             await db.flush()
