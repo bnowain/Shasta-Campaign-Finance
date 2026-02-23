@@ -2,9 +2,9 @@
 <div class="search-dropdown">
     {% for result in results %}
     <a class="search-result-item"
-       href="{% if result.entity_type == 'filer' %}/filers/{{ result.entity_id }}{% elif result.entity_type == 'election' %}/elections/{{ result.entity_id }}{% elif result.entity_type == 'transaction_entity' %}/transactions?search={{ result.name }}{% else %}#{% endif %}">
-        <span class="tag {% if result.entity_type == 'filer' %}tag-success{% elif result.entity_type == 'election' %}tag-warning{% else %}tag-muted{% endif %}" style="font-size: 0.7rem;">
-            {% if result.entity_type == 'filer' %}Filer{% elif result.entity_type == 'election' %}Election{% else %}Person{% endif %}
+       href="{% if result.entity_type == 'filer' %}/filers/{{ result.entity_id }}{% elif result.entity_type == 'person' %}/people/{{ result.entity_id }}{% elif result.entity_type == 'election' %}/elections/{{ result.entity_id }}{% elif result.entity_type == 'transaction_entity' %}/transactions?search={{ result.name }}{% else %}#{% endif %}">
+        <span class="tag {% if result.entity_type == 'filer' %}tag-success{% elif result.entity_type == 'person' %}tag-warning{% elif result.entity_type == 'election' %}tag-warning{% else %}tag-muted{% endif %}" style="font-size: 0.7rem;">
+            {% if result.entity_type == 'filer' %}Filer{% elif result.entity_type == 'person' %}Person{% elif result.entity_type == 'election' %}Election{% else %}Entity{% endif %}
         </span>
         <span class="search-result-name">{{ result.name }}</span>
         {% if result.context %}

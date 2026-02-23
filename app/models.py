@@ -180,7 +180,9 @@ class FilerPerson(Base):
     id              = Column(String, primary_key=True, default=gen_id)
     filer_id        = Column(String, ForeignKey("filers.filer_id"), nullable=False)
     person_id       = Column(String, ForeignKey("people.person_id"), nullable=False)
-    role            = Column(String)        # candidate, treasurer, principal_officer
+    role            = Column(String)        # candidate, treasurer, principal_officer, committee
+    match_confidence = Column(Float)        # Matching score (0.0–1.0)
+    needs_review    = Column(Boolean, default=False)  # True for medium-confidence (0.80–0.95)
     source          = Column(String, default="manual")
     created_at      = Column(DateTime, default=utcnow)
 
@@ -200,6 +202,7 @@ class TransactionPerson(Base):
     transaction_id  = Column(String, ForeignKey("transactions.transaction_id"), nullable=False)
     person_id       = Column(String, ForeignKey("people.person_id"), nullable=False)
     match_confidence = Column(Float)
+    needs_review    = Column(Boolean, default=False)  # True for medium-confidence (0.80–0.95)
     source          = Column(String, default="auto")
     created_at      = Column(DateTime, default=utcnow)
 

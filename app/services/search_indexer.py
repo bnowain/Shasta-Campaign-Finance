@@ -4,7 +4,7 @@ from sqlalchemy import text, select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import AsyncSessionLocal
-from app.models import Filer, Transaction, Election
+from app.models import Filer, Transaction, Election, Person, FilerPerson, TransactionPerson
 
 
 async def rebuild_search_index():
@@ -65,8 +65,36 @@ async def rebuild_search_index():
                 {"etype": "election", "eid": elec.election_id, "name": elec.name, "ctx": context},
             )
 
+        # Index people
+        people = (await session.execute(select(Person))).scalars().all()
+        for person in people:
+            # Count links
+            filer_count = (await session.execute(
+                select(func.count(FilerPerson.id)).where(FilerPerson.person_id == person.person_id)
+            )).scalar() or 0
+            txn_count = (await session.execute(
+                select(func.count(TransactionPerson.id)).where(TransactionPerson.person_id == person.person_id)
+            )).scalar() or 0
+            context = " ".join(filter(None, [
+                person.entity_type or "",
+                f"{filer_count} filer links" if filer_count else "",
+                f"{txn_count} transaction links" if txn_count else "",
+            ]))
+            await session.execute(
+                text(
+                    "INSERT INTO search_index(entity_type, entity_id, name, context) "
+                    "VALUES(:etype, :eid, :name, :ctx)"
+                ),
+                {"etype": "person", "eid": person.person_id, "name": person.canonical_name, "ctx": context},
+            )
+
         await session.commit()
-        return {"filers": len(filers), "transaction_entities": len(txn_names), "elections": len(elections)}
+        return {
+            "filers": len(filers),
+            "transaction_entities": len(txn_names),
+            "elections": len(elections),
+            "people": len(people),
+        }
 
 
 async def search_fts(query: str, limit: int = 20, db: AsyncSession = None):
@@ -138,6 +166,20 @@ async def search_fts(query: str, limit: int = 20, db: AsyncSession = None):
                         "entity_id": e.election_id,
                         "name": e.name,
                         "context": e.election_type or "",
+                        "rank": 0,
+                    })
+
+            remaining = limit - len(results)
+            if remaining > 0:
+                people = (await db.execute(
+                    select(Person).where(Person.canonical_name.ilike(pattern)).limit(remaining)
+                )).scalars().all()
+                for p in people:
+                    results.append({
+                        "entity_type": "person",
+                        "entity_id": p.person_id,
+                        "name": p.canonical_name,
+                        "context": p.entity_type or "",
                         "rank": 0,
                     })
 

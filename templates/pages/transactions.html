@@ -93,13 +93,14 @@
                     <th>Filer</th>
                     <th>City</th>
                     <th class="text-right">Amount</th>
+                    <th>Person</th>
                 </tr>
             </thead>
             <tbody id="transactions-table-body"
                    hx-get="/transactions/list?page=1"
                    hx-trigger="load"
                    hx-swap="innerHTML">
-                <tr><td colspan="6" class="loading-sentinel">Loading transactions...</td></tr>
+                <tr><td colspan="7" class="loading-sentinel">Loading transactions...</td></tr>
             </tbody>
         </table>
     </div>

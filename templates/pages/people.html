@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="page-header">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h1>People</h1>
+            <p class="text-muted">Individuals and organizations linked to campaign finance records</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="/people/review" class="btn btn-ghost">Review Queue</a>
+            <button class="btn btn-primary" onclick="document.getElementById('create-form').hidden = !document.getElementById('create-form').hidden">
+                New Person
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="create-form" hidden style="margin-bottom: 1.5rem;">
+    {% include "components/person_create_form.html" %}
+</div>
+<div id="create-result"></div>
+
+<div id="merge-bar" hidden style="margin-bottom: 1rem;">
+    <button class="btn btn-primary" id="merge-btn" disabled
+            onclick="openMergePreview()">
+        Merge Selected
+    </button>
+</div>
+
+<div class="filter-bar">
+    <input type="text"
+           class="filter-input"
+           name="search"
+           placeholder="Search by name..."
+           hx-get="/people/list"
+           hx-trigger="keyup changed delay:300ms"
+           hx-target="#people-table-body"
+           hx-include=".filter-input"
+           value="">
+    <select class="filter-input"
+            name="entity_type"
+            hx-get="/people/list"
+            hx-trigger="change"
+            hx-target="#people-table-body"
+            hx-include=".filter-input">
+        <option value="">All Types</option>
+        <option value="individual">Individual</option>
+        <option value="committee">Committee</option>
+        <option value="organization">Organization</option>
+    </select>
+</div>
+
+<div class="card">
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 30px;"></th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Filer Links</th>
+                    <th>Txn Links</th>
+                </tr>
+            </thead>
+            <tbody id="people-table-body"
+                   hx-get="/people/list?page=1"
+                   hx-trigger="load"
+                   hx-swap="innerHTML">
+                <tr><td colspan="5" class="loading-sentinel">Loading people...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="merge-preview-area"></div>
+{% endblock %}

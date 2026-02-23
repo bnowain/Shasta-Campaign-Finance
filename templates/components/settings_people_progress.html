@@ -1,0 +1,23 @@
+<div hx-ext="sse" sse-connect="/settings/stream" sse-swap="progress"
+     hx-target="#people-action" hx-swap="innerHTML">
+    <div class="pull-progress">
+        <div class="progress-bar">
+            <div class="progress-fill" style="width: 0%"></div>
+        </div>
+        <span class="pull-progress-text">Starting people check...</span>
+    </div>
+</div>
+
+<div hx-ext="sse" sse-connect="/settings/stream" sse-swap="complete"
+     hx-trigger="sse:complete"
+     hx-get="/settings/task-complete"
+     hx-target="#people-action"
+     hx-swap="innerHTML">
+</div>
+
+<div hx-ext="sse" sse-connect="/settings/stream" sse-swap="error_state"
+     hx-trigger="sse:error_state"
+     hx-get="/settings/task-error"
+     hx-target="#people-action"
+     hx-swap="innerHTML">
+</div>

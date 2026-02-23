@@ -46,3 +46,35 @@ window.addEventListener("beforeunload", function() {
         window._pullEventSource = null;
     }
 });
+
+// ─── People Merge ──────────────────────────────────────
+
+function updateMergeButton() {
+    var checkboxes = document.querySelectorAll(".merge-checkbox:checked");
+    var mergeBar = document.getElementById("merge-bar");
+    var mergeBtn = document.getElementById("merge-btn");
+
+    if (mergeBar) {
+        if (checkboxes.length >= 2) {
+            mergeBar.hidden = false;
+            mergeBtn.disabled = false;
+        } else if (checkboxes.length === 1) {
+            mergeBar.hidden = false;
+            mergeBtn.disabled = true;
+        } else {
+            mergeBar.hidden = true;
+        }
+    }
+}
+
+function openMergePreview() {
+    var checkboxes = document.querySelectorAll(".merge-checkbox:checked");
+    var ids = Array.from(checkboxes).map(function(cb) { return cb.value; }).join(",");
+
+    if (ids) {
+        htmx.ajax("GET", "/people/merge-preview?ids=" + ids, {
+            target: "#merge-preview-area",
+            swap: "innerHTML"
+        });
+    }
+}

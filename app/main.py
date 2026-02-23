@@ -19,7 +19,7 @@ from app.routers import system, atlas, scraper
 from app.routers import filings as filings_router
 from app.routers import filers as filers_router
 from app.routers import transactions as transactions_router
-from app.routers import stubs as stubs_router
+from app.routers import people as people_router
 from app.routers import search as search_router
 from app.routers import elections as elections_router
 from app.routers import settings as settings_router
@@ -68,7 +68,7 @@ app.include_router(filers_router.router)
 app.include_router(transactions_router.router)
 app.include_router(elections_router.router)
 app.include_router(settings_router.router)
-app.include_router(stubs_router.router)
+app.include_router(people_router.router)
 app.include_router(search_router.router)
 
 

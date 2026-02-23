@@ -1,0 +1,43 @@
+<div class="card" style="margin-top: 1.5rem;">
+    <div class="card-header">
+        <h3>Merge Preview</h3>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: 1rem;">
+            Select the canonical person to keep. All links from the other people will be merged into the winner.
+        </p>
+        <form method="post" action="/people/merge">
+            <input type="hidden" name="all_ids"
+                   value="{{ merge_data | map(attribute='person') | map(attribute='person_id') | join(',') }}">
+            <table class="data-table" style="margin-bottom: 1rem;">
+                <thead>
+                    <tr>
+                        <th>Keep</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Filer Links</th>
+                        <th>Txn Links</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for md in merge_data %}
+                    <tr>
+                        <td>
+                            <input type="radio" name="winner_id" value="{{ md.person.person_id }}"
+                                   {% if loop.first %}checked{% endif %}>
+                        </td>
+                        <td>{{ md.person.canonical_name }}</td>
+                        <td><span class="tag tag-muted">{{ md.person.entity_type or 'unknown' }}</span></td>
+                        <td class="mono">{{ md.filer_count }}</td>
+                        <td class="mono">{{ md.txn_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div style="display: flex; gap: 0.5rem;">
+                <button type="submit" class="btn btn-primary">Merge</button>
+                <button type="button" class="btn btn-ghost" onclick="document.getElementById('merge-preview-area').innerHTML = ''">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>

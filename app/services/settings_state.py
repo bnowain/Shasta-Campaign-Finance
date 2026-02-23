@@ -27,6 +27,9 @@ class SettingsState:
     candidates_linked: int = 0
     filings_discovered: int = 0
     filings_ingested: int = 0
+    people_linked: int = 0
+    people_created: int = 0
+    flagged_review: int = 0
     # Error
     error_message: str = ""
     # Timing
@@ -58,6 +61,9 @@ class SettingsStateManager:
             "candidates_linked": s.candidates_linked,
             "filings_discovered": s.filings_discovered,
             "filings_ingested": s.filings_ingested,
+            "people_linked": s.people_linked,
+            "people_created": s.people_created,
+            "flagged_review": s.flagged_review,
             "error_message": s.error_message,
             "elapsed": s.elapsed,
         }

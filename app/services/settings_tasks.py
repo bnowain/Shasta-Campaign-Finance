@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 from sqlalchemy import select, func
 
 from app.db import AsyncSessionLocal
-from app.models import Filer, Filing, WatchedFiler
+from app.models import Filer, Filing, WatchedFiler, Person, TransactionPerson, FilerPerson
 from app.services.candidate_matcher import relink_candidates
 from app.services.netfile_api import NetFileClient
 from app.services.settings_state import settings_state
@@ -208,4 +208,46 @@ async def run_check_filings():
 
         except Exception as e:
             logger.exception("Check Filings error: %s", e)
+            settings_state.set_error(str(e))
+
+
+async def run_check_people():
+    """Check People background task:
+    1. Link filers to people records
+    2. Link unlinked transactions to people records
+    """
+    async with _task_lock:
+        settings_state.start("people")
+
+        try:
+            from app.services.people_linker import link_filers_to_people, link_unlinked_transactions
+
+            # Step 1: Link filers
+            settings_state.set_progress(1, 2, "Linking filers",
+                                        "Matching filers to people records...")
+            async with AsyncSessionLocal() as db:
+                filer_summary = await link_filers_to_people(db)
+            logger.info("Filer linking: %s", filer_summary)
+
+            # Step 2: Link transactions
+            settings_state.set_progress(2, 2, "Linking transactions",
+                                        "Matching transactions to people records...")
+            async with AsyncSessionLocal() as db:
+                txn_summary = await link_unlinked_transactions(db)
+            logger.info("Transaction linking: %s", txn_summary)
+
+            total_linked = filer_summary["filers_linked"] + txn_summary["linked"]
+            total_created = filer_summary["people_created"] + txn_summary["created_people"]
+            total_review = filer_summary["flagged_review"] + txn_summary["flagged_review"]
+
+            settings_state.set_complete(
+                people_linked=total_linked,
+                people_created=total_created,
+                flagged_review=total_review,
+            )
+            logger.info("Check People complete: %d linked, %d created, %d flagged",
+                        total_linked, total_created, total_review)
+
+        except Exception as e:
+            logger.exception("Check People error: %s", e)
             settings_state.set_error(str(e))

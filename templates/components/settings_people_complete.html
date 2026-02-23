@@ -1,0 +1,15 @@
+<div class="settings-complete">
+    <span class="tag tag-success">Done</span>
+    <span class="text-muted" style="margin-left: 0.5rem;">
+        {{ people_linked }} linked,
+        {{ people_created }} created,
+        {{ flagged_review }} flagged for review
+        ({{ elapsed }}s)
+    </span>
+    <button class="btn btn-ghost" style="margin-left: 0.5rem;"
+            hx-get="/settings/task-dismiss"
+            hx-target="#people-action"
+            hx-swap="innerHTML">
+        Dismiss
+    </button>
+</div>

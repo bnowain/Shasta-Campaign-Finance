@@ -1,0 +1,29 @@
+<div class="card">
+    <div class="card-header"><h3>New Person</h3></div>
+    <div class="card-body">
+        <form hx-post="/people/create"
+              hx-target="#create-result"
+              hx-swap="innerHTML"
+              style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: flex-end;">
+            <div>
+                <label class="text-muted" style="font-size: 0.8rem; display: block;">Name</label>
+                <input type="text" name="canonical_name" class="form-input filter-input"
+                       placeholder="Full name..." required style="min-width: 240px;">
+            </div>
+            <div>
+                <label class="text-muted" style="font-size: 0.8rem; display: block;">Type</label>
+                <select name="entity_type" class="form-input filter-input">
+                    <option value="individual">Individual</option>
+                    <option value="committee">Committee</option>
+                    <option value="organization">Organization</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-muted" style="font-size: 0.8rem; display: block;">Notes</label>
+                <input type="text" name="notes" class="form-input filter-input"
+                       placeholder="Optional notes...">
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+        </form>
+    </div>
+</div>

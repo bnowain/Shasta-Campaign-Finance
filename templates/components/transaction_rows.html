@@ -12,11 +12,40 @@
     </td>
     <td>{{ txn.city or '' }}{% if txn.state %}, {{ txn.state }}{% endif %}</td>
     <td class="text-right mono">${{ "{:,.2f}".format(txn.amount) }}</td>
+    <td class="person-tag-cell" id="person-tags-{{ txn.transaction_id }}">
+        {% for pl in txn.person_links %}
+        <span class="person-chip">
+            <a href="/people/{{ pl.person.person_id }}" class="person-chip-name">{{ pl.person.canonical_name }}</a>
+            <button class="person-chip-remove"
+                    hx-delete="/people/unlink-transaction?transaction_id={{ txn.transaction_id }}&person_id={{ pl.person.person_id }}"
+                    hx-target="#person-tags-{{ txn.transaction_id }}"
+                    hx-swap="innerHTML"
+                    title="Remove link">&times;</button>
+        </span>
+        {% endfor %}
+        <button class="btn-tag-add"
+                onclick="this.nextElementSibling.hidden = !this.nextElementSibling.hidden"
+                title="Link person">+</button>
+        <div hidden>
+            <div class="person-tag-dropdown">
+                <input type="text"
+                       class="filter-input"
+                       placeholder="Search..."
+                       hx-get="/people/tag-search?transaction_id={{ txn.transaction_id }}"
+                       hx-trigger="keyup changed delay:200ms"
+                       hx-target="closest .person-tag-dropdown"
+                       hx-swap="outerHTML"
+                       name="q"
+                       autocomplete="off"
+                       style="width: 180px; font-size: 0.8rem; padding: 4px 8px;">
+            </div>
+        </div>
+    </td>
 </tr>
 {% endfor %}
 
 {% if not transactions %}
-<tr><td colspan="6" class="empty-state text-muted">No transactions match your filters.</td></tr>
+<tr><td colspan="7" class="empty-state text-muted">No transactions match your filters.</td></tr>
 {% endif %}
 
 {% if has_more %}
@@ -24,6 +53,6 @@
     hx-get="/transactions/list?page={{ page + 1 }}&search={{ search }}&schedule={{ schedule }}&filer_id={{ filer_id }}&amount_min={{ amount_min }}&amount_max={{ amount_max }}&date_from={{ date_from }}&date_to={{ date_to }}"
     hx-trigger="revealed"
     hx-swap="outerHTML">
-    <td colspan="6">Loading more...</td>
+    <td colspan="7">Loading more...</td>
 </tr>
 {% endif %}

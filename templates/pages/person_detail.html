@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="/people">People</a>
+    <span class="breadcrumb-sep">/</span>
+    <span>{{ person.canonical_name }}</span>
+</div>
+
+<div class="page-header">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h1>{{ person.canonical_name }}</h1>
+            <p class="text-muted">
+                {% if person.entity_type %}
+                <span class="tag {% if person.entity_type == 'individual' %}tag-muted{% elif person.entity_type == 'committee' %}tag-warning{% else %}tag-success{% endif %}">
+                    {{ person.entity_type }}
+                </span>
+                {% endif %}
+            </p>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-ghost" onclick="document.getElementById('edit-form').hidden = !document.getElementById('edit-form').hidden">Edit</button>
+            <form method="post" action="/people/{{ person.person_id }}/delete"
+                  onsubmit="return confirm('Delete this person and all their links?')">
+                <button type="submit" class="btn btn-ghost" style="color: var(--danger);">Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="edit-form" hidden style="margin-bottom: 1.5rem;">
+    <div class="card">
+        <div class="card-header"><h3>Edit Person</h3></div>
+        <div class="card-body">
+            <form method="post" action="/people/{{ person.person_id }}/edit"
+                  style="display: flex; flex-direction: column; gap: 0.75rem; max-width: 400px;">
+                <input type="text" name="canonical_name" class="form-input filter-input"
+                       value="{{ person.canonical_name }}" placeholder="Name" required>
+                <select name="entity_type" class="form-input filter-input">
+                    <option value="individual" {% if person.entity_type == 'individual' %}selected{% endif %}>Individual</option>
+                    <option value="committee" {% if person.entity_type == 'committee' %}selected{% endif %}>Committee</option>
+                    <option value="organization" {% if person.entity_type == 'organization' %}selected{% endif %}>Organization</option>
+                </select>
+                <textarea name="notes" class="form-input filter-input" rows="2"
+                          placeholder="Notes">{{ person.notes or '' }}</textarea>
+                <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="detail-meta-grid">
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Entity Type</span>
+        <span class="detail-meta-value">{{ person.entity_type or 'Unknown' }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Filer Links</span>
+        <span class="detail-meta-value mono">{{ filer_links|length }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Transaction Links</span>
+        <span class="detail-meta-value mono">{{ "{:,}".format(txn_total_count) }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Total Contributed</span>
+        <span class="detail-meta-value mono">${{ "{:,.2f}".format(contributed) }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Total as Payee</span>
+        <span class="detail-meta-value mono">${{ "{:,.2f}".format(as_payee) }}</span>
+    </div>
+    <div class="detail-meta-item">
+        <span class="detail-meta-label">Created</span>
+        <span class="detail-meta-value mono">{{ person.created_at.strftime('%Y-%m-%d') if person.created_at else 'N/A' }}</span>
+    </div>
+    {% if aliases %}
+    <div class="detail-meta-item" style="grid-column: 1 / -1;">
+        <span class="detail-meta-label">Aliases</span>
+        <span class="detail-meta-value">
+            {% for alias in aliases %}
+            <span class="tag tag-muted" style="margin-right: 0.25rem;">{{ alias }}</span>
+            {% endfor %}
+        </span>
+    </div>
+    {% endif %}
+    {% if person.notes %}
+    <div class="detail-meta-item" style="grid-column: 1 / -1;">
+        <span class="detail-meta-label">Notes</span>
+        <span class="detail-meta-value">{{ person.notes }}</span>
+    </div>
+    {% endif %}
+</div>
+
+{% if filer_links %}
+<div class="card" style="margin-top: var(--space-6);">
+    <div class="card-header">
+        <h3>Filer Associations</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Filer</th>
+                    <th>Role</th>
+                    <th>Confidence</th>
+                    <th>Source</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fl in filer_links %}
+                <tr>
+                    <td>
+                        {% if fl.filer %}
+                        <a href="/filers/{{ fl.filer.filer_id }}">{{ fl.filer.name }}</a>
+                        {% else %}
+                        —
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if fl.role %}
+                        <span class="tag tag-muted">{{ fl.role }}</span>
+                        {% else %}—{% endif %}
+                    </td>
+                    <td class="mono">
+                        {% if fl.match_confidence is not none %}
+                        {{ "%.0f"|format(fl.match_confidence * 100) }}%
+                        {% else %}—{% endif %}
+                    </td>
+                    <td class="text-muted">{{ fl.source or '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<div class="card" style="margin-top: var(--space-6);">
+    <div class="card-header">
+        <h3>Transaction Appearances</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        {% if txn_links %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Schedule</th>
+                    <th>Entity Name</th>
+                    <th>Amount</th>
+                    <th>Filer</th>
+                    <th>Confidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tl in txn_links %}
+                <tr>
+                    <td class="mono">
+                        {{ tl.transaction.transaction_date.strftime('%m/%d/%Y') if tl.transaction and tl.transaction.transaction_date else '' }}
+                    </td>
+                    <td>
+                        {% if tl.transaction %}
+                        <span class="tag tag-muted">{{ tl.transaction.schedule or '—' }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ tl.transaction.entity_name if tl.transaction else '—' }}</td>
+                    <td class="text-right mono">
+                        {% if tl.transaction %}
+                        ${{ "{:,.2f}".format(tl.transaction.amount) }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if tl.transaction and tl.transaction.filing and tl.transaction.filing.filer %}
+                        <a href="/filers/{{ tl.transaction.filing.filer.filer_id }}">
+                            {{ tl.transaction.filing.filer.name }}
+                        </a>
+                        {% else %}—{% endif %}
+                    </td>
+                    <td class="mono">
+                        {% if tl.match_confidence is not none %}
+                        {{ "%.0f"|format(tl.match_confidence * 100) }}%
+                        {% else %}—{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if txn_total_count > 50 %}
+        <p class="text-muted" style="padding: var(--space-3) var(--space-4); text-align: center;">
+            Showing 50 of {{ "{:,}".format(txn_total_count) }} transaction appearances
+        </p>
+        {% endif %}
+        {% else %}
+        <p class="text-muted" style="padding: var(--space-4);">No transaction appearances.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

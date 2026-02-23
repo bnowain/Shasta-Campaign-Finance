@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from app.db import get_db
-from app.models import Transaction, Filing, Filer
+from app.models import Transaction, Filing, Filer, TransactionPerson
 
 router = APIRouter(tags=["transactions"])
 
@@ -105,11 +105,15 @@ async def transactions_list(
     result = await db.execute(q)
     transactions = result.scalars().all()
 
-    # Load filing+filer for display
+    # Load filing+filer and person links for display
     for txn in transactions:
         await db.refresh(txn, ["filing"])
         if txn.filing:
             await db.refresh(txn.filing, ["filer"])
+        # Load person links with person relationship
+        await db.refresh(txn, ["person_links"])
+        for pl in txn.person_links:
+            await db.refresh(pl, ["person"])
 
     has_more = page * PAGE_SIZE < total
 

@@ -1,0 +1,34 @@
+<div class="person-tag-dropdown">
+    <input type="text"
+           class="filter-input"
+           placeholder="Search people..."
+           value="{{ q }}"
+           hx-get="/people/tag-search?transaction_id={{ transaction_id }}"
+           hx-trigger="keyup changed delay:200ms"
+           hx-target="closest .person-tag-dropdown"
+           hx-swap="outerHTML"
+           name="q"
+           autocomplete="off"
+           style="width: 200px; font-size: 0.8rem; padding: 4px 8px;">
+    {% if results %}
+    <div class="tag-search-results">
+        {% for person in results %}
+        <form hx-post="/people/link-transaction"
+              hx-target="#person-tags-{{ transaction_id }}"
+              hx-swap="innerHTML"
+              style="display: contents;">
+            <input type="hidden" name="transaction_id" value="{{ transaction_id }}">
+            <input type="hidden" name="person_id" value="{{ person.person_id }}">
+            <button type="submit" class="tag-search-result-item">
+                {{ person.canonical_name }}
+                <span class="text-muted" style="font-size: 0.7rem;">{{ person.entity_type or '' }}</span>
+            </button>
+        </form>
+        {% endfor %}
+    </div>
+    {% elif q %}
+    <div class="tag-search-results">
+        <span class="text-muted" style="padding: 6px 8px; display: block; font-size: 0.8rem;">No matches</span>
+    </div>
+    {% endif %}
+</div>

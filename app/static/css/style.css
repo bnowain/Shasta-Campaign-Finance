@@ -855,6 +855,142 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* ─── Person Chips & Tags ────────────────────────────── */
+
+.person-tag-cell {
+    position: relative;
+    min-width: 150px;
+}
+
+.person-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    border-radius: var(--radius-pill);
+    padding: 1px 8px;
+    font-size: 0.75rem;
+    margin: 1px 2px;
+    white-space: nowrap;
+}
+
+.person-chip-name {
+    text-decoration: none;
+    color: inherit;
+}
+
+.person-chip-name:hover {
+    text-decoration: underline;
+}
+
+.person-chip-remove {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0 2px;
+    line-height: 1;
+}
+
+.person-chip-remove:hover {
+    color: var(--danger);
+}
+
+.btn-tag-add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-pill);
+    background: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.85rem;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.btn-tag-add:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--tag-bg);
+}
+
+.person-tag-dropdown {
+    position: relative;
+    display: inline-block;
+    margin-top: 4px;
+}
+
+.tag-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 50;
+    min-width: 200px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.tag-search-result-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 10px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-family: var(--font-sans);
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+}
+
+.tag-search-result-item:last-child {
+    border-bottom: none;
+}
+
+.tag-search-result-item:hover {
+    background: var(--bg);
+}
+
+/* ─── Form Input ─────────────────────────────────────── */
+
+.form-input {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-input);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    background: var(--surface);
+    color: var(--text);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* ─── Settings Complete ──────────────────────────────── */
+
+.settings-complete {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
 /* ─── Responsive ─────────────────────────────────────── */
 
 @media (max-width: 768px) {

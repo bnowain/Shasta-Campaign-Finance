@@ -17,7 +17,7 @@ from sse_starlette.sse import EventSourceResponse
 from app.db import get_db
 from app.models import WatchedFiler
 from app.services.settings_state import settings_state
-from app.services.settings_tasks import is_task_running, run_check_elections, run_check_filings
+from app.services.settings_tasks import is_task_running, run_check_elections, run_check_filings, run_check_people
 
 logger = logging.getLogger(__name__)
 
@@ -130,6 +130,22 @@ async def check_filings(request: Request, background_tasks: BackgroundTasks):
 
     background_tasks.add_task(run_check_filings)
     return templates.TemplateResponse("components/settings_filings_progress.html", {
+        "request": request,
+    })
+
+
+# ─── Check People ───────────────────────────────────────
+
+@router.post("/check-people", response_class=HTMLResponse)
+async def check_people(request: Request, background_tasks: BackgroundTasks):
+    """Trigger Check People background task."""
+    if is_task_running():
+        return templates.TemplateResponse("components/settings_people_progress.html", {
+            "request": request,
+        })
+
+    background_tasks.add_task(run_check_people)
+    return templates.TemplateResponse("components/settings_people_progress.html", {
         "request": request,
     })
 

@@ -1,0 +1,33 @@
+{% for person in people %}
+<tr>
+    <td>
+        <input type="checkbox" class="merge-checkbox" value="{{ person.person_id }}"
+               onchange="updateMergeButton()">
+    </td>
+    <td><a href="/people/{{ person.person_id }}">{{ person.canonical_name }}</a></td>
+    <td>
+        {% if person.entity_type %}
+        <span class="tag {% if person.entity_type == 'individual' %}tag-muted{% elif person.entity_type == 'committee' %}tag-warning{% else %}tag-success{% endif %}">
+            {{ person.entity_type }}
+        </span>
+        {% else %}
+        —
+        {% endif %}
+    </td>
+    <td class="mono">{{ filer_counts.get(person.person_id, 0) }}</td>
+    <td class="mono">{{ txn_counts.get(person.person_id, 0) }}</td>
+</tr>
+{% endfor %}
+
+{% if not people %}
+<tr><td colspan="5" class="empty-state text-muted">No people match your filters.</td></tr>
+{% endif %}
+
+{% if has_more %}
+<tr class="loading-sentinel"
+    hx-get="/people/list?page={{ page + 1 }}&search={{ search }}&entity_type={{ entity_type }}"
+    hx-trigger="revealed"
+    hx-swap="outerHTML">
+    <td colspan="5">Loading more...</td>
+</tr>
+{% endif %}

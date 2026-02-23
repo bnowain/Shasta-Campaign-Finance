@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="/people">People</a>
+    <span class="breadcrumb-sep">/</span>
+    <span>Review Queue</span>
+</div>
+
+<div class="page-header">
+    <h1>Review Queue</h1>
+    <p class="text-muted">
+        Medium-confidence matches flagged for human review
+        ({{ txn_review_count + filer_review_count }} pending)
+    </p>
+</div>
+
+{% if filer_reviews %}
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-header">
+        <h3>Filer Links ({{ filer_review_count }})</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Filer</th>
+                    <th>Matched Person</th>
+                    <th>Role</th>
+                    <th>Confidence</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="filer-review-body">
+                {% for fl in filer_reviews %}
+                <tr id="filer-review-{{ fl.id }}">
+                    <td>
+                        {% if fl.filer %}
+                        <a href="/filers/{{ fl.filer.filer_id }}">{{ fl.filer.name }}</a>
+                        {% else %}—{% endif %}
+                    </td>
+                    <td>
+                        {% if fl.person %}
+                        <a href="/people/{{ fl.person.person_id }}">{{ fl.person.canonical_name }}</a>
+                        {% else %}—{% endif %}
+                    </td>
+                    <td><span class="tag tag-muted">{{ fl.role or '—' }}</span></td>
+                    <td class="mono">
+                        {% if fl.match_confidence is not none %}
+                        {{ "%.0f"|format(fl.match_confidence * 100) }}%
+                        {% else %}—{% endif %}
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 0.25rem;">
+                            <form hx-post="/people/review/filer/{{ fl.id }}/resolve"
+                                  hx-target="#filer-review-{{ fl.id }}"
+                                  hx-swap="outerHTML">
+                                <input type="hidden" name="action" value="approve">
+                                <button type="submit" class="btn btn-sm btn-ghost" style="color: var(--success);">Approve</button>
+                            </form>
+                            <form hx-post="/people/review/filer/{{ fl.id }}/resolve"
+                                  hx-target="#filer-review-{{ fl.id }}"
+                                  hx-swap="outerHTML">
+                                <input type="hidden" name="action" value="reject">
+                                <button type="submit" class="btn btn-sm btn-ghost" style="color: var(--danger);">Reject</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% if txn_reviews %}
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-header">
+        <h3>Transaction Links ({{ txn_review_count }})</h3>
+    </div>
+    <div class="card-body" style="padding: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Entity Name</th>
+                    <th>Matched Person</th>
+                    <th>Amount</th>
+                    <th>Confidence</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="txn-review-body">
+                {% for tl in txn_reviews %}
+                <tr id="txn-review-{{ tl.id }}">
+                    <td>{{ tl.transaction.entity_name if tl.transaction else '—' }}</td>
+                    <td>
+                        {% if tl.person %}
+                        <a href="/people/{{ tl.person.person_id }}">{{ tl.person.canonical_name }}</a>
+                        {% else %}—{% endif %}
+                    </td>
+                    <td class="mono text-right">
+                        {% if tl.transaction %}
+                        ${{ "{:,.2f}".format(tl.transaction.amount) }}
+                        {% endif %}
+                    </td>
+                    <td class="mono">
+                        {% if tl.match_confidence is not none %}
+                        {{ "%.0f"|format(tl.match_confidence * 100) }}%
+                        {% else %}—{% endif %}
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 0.25rem;">
+                            <form hx-post="/people/review/transaction/{{ tl.id }}/resolve"
+                                  hx-target="#txn-review-{{ tl.id }}"
+                                  hx-swap="outerHTML">
+                                <input type="hidden" name="action" value="approve">
+                                <button type="submit" class="btn btn-sm btn-ghost" style="color: var(--success);">Approve</button>
+                            </form>
+                            <form hx-post="/people/review/transaction/{{ tl.id }}/resolve"
+                                  hx-target="#txn-review-{{ tl.id }}"
+                                  hx-swap="outerHTML">
+                                <input type="hidden" name="action" value="reject">
+                                <button type="submit" class="btn btn-sm btn-ghost" style="color: var(--danger);">Reject</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% if not filer_reviews and not txn_reviews %}
+<div class="card">
+    <div class="card-body">
+        <p class="empty-state text-muted">No matches pending review. All clear!</p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
